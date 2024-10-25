@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CourseContentPage extends StatelessWidget {
   final Map<String, dynamic> course;
 
-  const CourseContentPage({Key? key, required this.course}) : super(key: key);
+  const CourseContentPage({super.key, required this.course});
 
   @override
   Widget build(BuildContext context) {

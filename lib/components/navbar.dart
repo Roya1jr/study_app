@@ -10,7 +10,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  Widget _child = FavoritesPage();
+  Widget _child = const FavoritesPage();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           _child = const FavoritesPage();
           break;
         case 1:
-          _child = NotesPage();
+          _child = const NotesPage();
           break;
         case 2:
           _child = const Text("Create");
