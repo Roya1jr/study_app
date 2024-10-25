@@ -4,33 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:study_app/main.dart';
 
 class NotesPage extends StatelessWidget {
-  NotesPage({super.key});
-  final List<Map<String, String>> courses = [
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Introduction to Computer Science',
-      'faculty': 'Faculty of Computer Science',
-    },
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Data Structures & Algorithms',
-      'faculty': 'Faculty of Computer Science',
-    },
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Linear Algebra',
-      'faculty': 'Faculty of Mathematics',
-    },
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Marketing 101',
-      'faculty': 'Faculty of Business',
-    },
-  ];
+  const NotesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +20,7 @@ class NotesPage extends StatelessWidget {
       items: appState.courses.map((course) {
         return Builder(
           builder: (BuildContext context) {
-            final isFavorite = appState.courses.contains(course);
+            final isFavorite = appState.favorites.contains(course);
 
             return CourseCard(
               imageUrl: course['image']!,
@@ -54,7 +28,7 @@ class NotesPage extends StatelessWidget {
               faculty: course['faculty']!,
               isFavorite: isFavorite,
               onFavoriteToggle: () {
-                appState.toggleCourses(course);
+                appState.toggleFavorite(course);
               },
             );
           },
@@ -141,6 +115,7 @@ class CourseCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
+                      overflow: TextOverflow.ellipsis,
                       faculty,
                       style: TextStyle(
                         fontSize: 16,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:study_app/assets/quiz.dart';
 import 'package:study_app/components/navbar.dart';
 
 void main() {
@@ -17,38 +18,15 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final List<Map<String, String>> _courses = [
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Introduction to Computer Science',
-      'faculty': 'Faculty of Computer Science',
-    },
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Data Structures & Algorithms',
-      'faculty': 'Faculty of Computer Science',
-    },
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Linear Algebra',
-      'faculty': 'Faculty of Mathematics',
-    },
-    {
-      'image':
-          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
-      'title': 'Marketing 101',
-      'faculty': 'Faculty of Business',
-    },
-  ];
-  List<Map<String, String>> get courses => _courses;
-  void toggleCourses(Map<String, String> courseTitle) {
-    if (_courses.contains(courseTitle)) {
-      _courses.remove(courseTitle);
+  final List<Map<String, dynamic>> _courses = lCourses;
+  List<Map<String, dynamic>> get courses => _courses;
+  final List<Map<String, dynamic>> _favorites = [];
+  List<Map<String, dynamic>> get favorites => _favorites;
+  void toggleFavorite(Map<String, dynamic> mycourse) {
+    if (_favorites.contains(mycourse)) {
+      _favorites.remove(mycourse);
     } else {
-      _courses.add(courseTitle);
+      _favorites.add(mycourse);
     }
     notifyListeners();
   }
