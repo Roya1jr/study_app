@@ -1,5 +1,6 @@
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:study_app/views/creator.dart';
 import 'package:study_app/views/notes.dart';
 import 'package:study_app/views/favorites.dart';
 
@@ -29,23 +30,23 @@ class _BottomNavBarState extends State<BottomNavBar> {
         bottomNavigationBar: FluidNavBar(
           icons: [
             FluidNavBarIcon(
-                icon: Icons.home,
-                backgroundColor: const Color.fromARGB(255, 32, 22, 11),
+                icon: Icons.favorite,
+                backgroundColor: const Color.fromARGB(255, 29, 58, 103),
                 extras: {"label": "favorites"}),
             FluidNavBarIcon(
                 icon: Icons.bookmarks_outlined,
-                backgroundColor: const Color.fromARGB(255, 32, 22, 11),
+                backgroundColor: const Color.fromARGB(255, 29, 58, 103),
                 extras: {"label": "notes"}),
             FluidNavBarIcon(
                 icon: Icons.bookmark_add_outlined,
-                backgroundColor: const Color.fromARGB(255, 32, 22, 11),
+                backgroundColor: const Color.fromARGB(255, 29, 58, 103),
                 extras: {"label": "create"}),
           ],
           onChange: _handleNav,
           style: const FluidNavBarStyle(
-            barBackgroundColor: Color.fromARGB(255, 121, 87, 55),
-            iconBackgroundColor: Color.fromARGB(255, 62, 50, 35),
+            barBackgroundColor: Color.fromARGB(255, 29, 58, 103),
             iconSelectedForegroundColor: Colors.white,
+            iconUnselectedForegroundColor: Color.fromARGB(255, 227, 236, 242),
           ),
           animationFactor: 0.5,
           scaleFactor: 1.8,
@@ -64,7 +65,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           _child = const NotesPage();
           break;
         case 2:
-          _child = const Text("Create");
+          _child = const CreatorPage();
           break;
       }
     });

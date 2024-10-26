@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color.fromARGB(255, 29, 24, 18))),
+                seedColor: const Color.fromARGB(255, 14, 45, 94))),
         home: const BottomNavBar(),
       ),
     );
