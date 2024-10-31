@@ -18,6 +18,9 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  final List<Map<String, dynamic>> _custom_courses = [];
+  List<Map<String, dynamic>> get custom_courses => _custom_courses;
+
   final List<Map<String, dynamic>> _courses = lCourses;
   List<Map<String, dynamic>> get courses => _courses;
   final List<Map<String, dynamic>> _favorites = [];
@@ -28,6 +31,15 @@ class MyAppState extends ChangeNotifier {
     } else {
       _favorites.add(mycourse);
     }
+    notifyListeners();
+  }
+
+  void addCourse(Map<String, dynamic> mycourse) {
+    if (_custom_courses.contains(mycourse)) {
+      _custom_courses.remove(mycourse);
+      _custom_courses.add(mycourse);
+    }
+    _custom_courses.add(mycourse);
     notifyListeners();
   }
 

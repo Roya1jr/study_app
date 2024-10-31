@@ -1,6 +1,6 @@
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:study_app/views/creator.dart';
+import 'package:study_app/views/creatorlist.dart';
 import 'package:study_app/views/notes.dart';
 import 'package:study_app/views/favorites.dart';
 
@@ -65,7 +65,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           _child = const NotesPage();
           break;
         case 2:
-          _child = const CreatorPage();
+          _child = const CourseListPage();
           break;
       }
     });
