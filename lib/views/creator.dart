@@ -7,9 +7,10 @@ import 'package:study_app/components/flashcard_widget.dart';
 import 'package:study_app/components/quiz_widget.dart';
 import 'package:study_app/components/flashcard_dialog.dart';
 import 'package:study_app/components/quiz_dialog.dart';
+import 'package:study_app/models/models.dart';
 
 class CreatorPage extends StatefulWidget {
-  final Map<String, dynamic>? course;
+  final Course? course;
 
   const CreatorPage({super.key, this.course});
 
@@ -19,54 +20,52 @@ class CreatorPage extends StatefulWidget {
 
 class _CreatorPageState extends State<CreatorPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-  List<Map<String, dynamic>> flashCards = [];
-  List<Map<String, dynamic>> quizzes = [];
+  List<FlashCard> flashCards = [];
+  List<Quiz> quizzes = [];
   int currentQuizIndex = -1;
 
   @override
   void initState() {
     super.initState();
     if (widget.course != null) {
-      flashCards =
-          List<Map<String, dynamic>>.from(widget.course!['flash_cards'] ?? []);
-      quizzes =
-          List<Map<String, dynamic>>.from(widget.course!['quizzes'] ?? []);
+      flashCards = widget.course!.flashCards;
+      quizzes = widget.course!.quizzes;
     }
   }
 
   void _submitForm() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final formData = _formKey.currentState!.value;
-      final courseData = {
-        'image': formData['image'],
-        'title': formData['title'],
-        'faculty': formData['faculty'],
-        'flash_cards': flashCards,
-        'quizzes': quizzes,
-      };
+      final course = Course(
+          imageUrl: formData['image'],
+          title: formData['title'],
+          faculty: formData['faculty'],
+          flashCards: flashCards,
+          quizzes: quizzes);
+
       final appState = Provider.of<MyAppState>(context, listen: false);
-      appState.addCourse(courseData);
+      appState.addCourse(course);
       Navigator.pop(context);
     }
   }
 
-  void _addFlashCard(Map<String, dynamic> flashCard) {
+  void _addFlashCard(FlashCard flashCard) {
     setState(() {
       flashCards.add(flashCard);
     });
   }
 
-  void _addQuiz(Map<String, dynamic> quiz) {
+  void _addQuiz(Quiz quiz) {
     setState(() {
       quizzes.add(quiz);
       currentQuizIndex = quizzes.length - 1;
     });
   }
 
-  void _addQuizQuestion(Map<String, dynamic> question) {
+  void _addQuizQuestion(Question question) {
     if (currentQuizIndex != -1) {
       setState(() {
-        quizzes[currentQuizIndex]['questions'].add(question);
+        quizzes[currentQuizIndex].questions.add(question);
       });
     }
   }
@@ -79,7 +78,7 @@ class _CreatorPageState extends State<CreatorPage> {
         padding: const EdgeInsets.all(16),
         child: FormBuilder(
           key: _formKey,
-          initialValue: widget.course ?? {},
+          initialValue: widget.course != null ? widget.course!.toJson() : {},
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -187,6 +186,8 @@ class _CreatorPageState extends State<CreatorPage> {
               quiz: quizzes[index],
               onAddQuestion: _addQuizQuestion,
               onDelete: () => setState(() => quizzes.removeAt(index)),
+              onDeleteQuestion: (lindex) =>
+                  setState(() => quizzes[index].questions.removeAt(lindex)),
             );
           },
         ),

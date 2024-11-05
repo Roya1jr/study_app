@@ -1,3 +1,5 @@
+import 'package:study_app/models/models.dart';
+
 final List<Map<String, dynamic>> _courses = [
   {
     'image':
@@ -726,3 +728,6 @@ final List<Map<String, dynamic>> _courses = [
 ];
 
 List<Map<String, dynamic>> get lCourses => _courses;
+
+final List<Course> dbCourses =
+    _courses.map((json) => Course.fromJson(json)).toList();

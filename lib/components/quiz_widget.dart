@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:study_app/components/quiz_question_dialog.dart';
+import 'package:study_app/models/models.dart';
 
 class QuizWidget extends StatelessWidget {
-  final Map<String, dynamic> quiz;
-  final Function(Map<String, dynamic>) onAddQuestion;
+  final Quiz quiz;
+  final Function(Question) onAddQuestion;
+  final Function(int)
+      onDeleteQuestion; // Callback for deleting a specific question
   final VoidCallback onDelete;
 
-  const QuizWidget(
-      {super.key,
-      required this.quiz,
-      required this.onAddQuestion,
-      required this.onDelete});
+  const QuizWidget({
+    super.key,
+    required this.quiz,
+    required this.onAddQuestion,
+    required this.onDelete,
+    required this.onDeleteQuestion,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class QuizWidget extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            title: Text(quiz['title']),
+            title: Text(quiz.title),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -39,24 +44,30 @@ class QuizWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (quiz['questions'] != null || quiz['questions'].isEmpty)
+          // Change the condition to check for non-empty questions
+          if (quiz.questions.isNotEmpty)
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: quiz['questions'].length,
+              itemCount: quiz.questions.length,
               itemBuilder: (context, qIndex) {
-                final question = quiz['questions'][qIndex];
+                final q = quiz.questions[qIndex];
                 return ListTile(
-                  title: Text(question['question']),
-                  subtitle: Text('Answer: ${question['answer']}'),
+                  title: Text(q.question),
+                  subtitle: Text('Answer: ${q.answer}'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
-                      quiz['questions'].removeAt(qIndex);
+                      onDeleteQuestion(qIndex); // Call the delete callback
                     },
                   ),
                 );
               },
+            ),
+          if (quiz.questions.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('No questions added yet.'),
             ),
         ],
       ),

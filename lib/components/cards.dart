@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_app/models/models.dart';
 import 'package:study_app/views/content.dart';
 
 class FCard extends StatelessWidget {
@@ -31,7 +32,7 @@ class FCard extends StatelessWidget {
 }
 
 class CourseListCard extends StatelessWidget {
-  final Map<String, dynamic> course;
+  final Course course;
   final Function() onRemove;
 
   const CourseListCard(
@@ -41,9 +42,9 @@ class CourseListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image.network(course['image']!),
-        title: Text(course['title']!),
-        subtitle: Text(course['faculty']!),
+        leading: Image.network(course.imageUrl),
+        title: Text(course.title),
+        subtitle: Text(course.faculty),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: onRemove,

@@ -8,7 +8,7 @@ class CourseListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final courses = context.watch<MyAppState>().custom_courses;
+    final courses = context.watch<MyAppState>().customCourses;
 
     return Scaffold(
       appBar: AppBar(
@@ -23,8 +23,8 @@ class CourseListPage extends StatelessWidget {
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text(course['title']),
-                    subtitle: Text(course['faculty']),
+                    title: Text(course.title),
+                    subtitle: Text(course.faculty),
                     onTap: () {
                       Navigator.push(
                         context,

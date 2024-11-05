@@ -25,6 +25,16 @@ class Course {
           (json['quizzes'] as List).map((quiz) => Quiz.fromJson(quiz)).toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'image': imageUrl,
+      'title': title,
+      'faculty': faculty,
+      'flash_cards': flashCards.map((card) => card.toJson()).toList(),
+      'quizzes': quizzes.map((quiz) => quiz.toJson()).toList(),
+    };
+  }
 }
 
 class FlashCard {
@@ -41,6 +51,13 @@ class FlashCard {
       question: json['question'],
       answer: json['answer'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'question': question,
+      'answer': answer,
+    };
   }
 }
 
@@ -59,6 +76,13 @@ class Quiz {
       questions:
           (json['questions'] as List).map((q) => Question.fromJson(q)).toList(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'questions': questions.map((q) => q.toJson()).toList(),
+    };
   }
 }
 
@@ -79,5 +103,13 @@ class Question {
       options: List<String>.from(json['options']),
       answer: json['answer'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'question': question,
+      'options': options,
+      'answer': answer,
+    };
   }
 }

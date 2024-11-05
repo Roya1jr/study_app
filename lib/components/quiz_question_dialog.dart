@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:study_app/models/models.dart';
 
 class QuizQuestionDialog extends StatefulWidget {
-  final Function(Map<String, dynamic>) onAdd;
+  final Function(Question) onAdd;
 
   const QuizQuestionDialog({super.key, required this.onAdd});
 
   @override
-  _QuizQuestionDialogState createState() => _QuizQuestionDialogState();
+  QuizQuestionDialogState createState() => QuizQuestionDialogState();
 }
 
-class _QuizQuestionDialogState extends State<QuizQuestionDialog> {
+class QuizQuestionDialogState extends State<QuizQuestionDialog> {
   final questionController = TextEditingController();
   final optionsControllers = List.generate(4, (_) => TextEditingController());
   String? selectedAnswer;
@@ -32,10 +33,8 @@ class _QuizQuestionDialogState extends State<QuizQuestionDialog> {
                 decoration: InputDecoration(labelText: 'Option ${i + 1}'),
                 onChanged: (value) {
                   setState(() {
-                    // Ensure dropdown reflects latest option changes.
                     if (selectedAnswer == optionsControllers[i].text) {
-                      selectedAnswer =
-                          value; // Update selectedAnswer if it was the edited option.
+                      selectedAnswer = value;
                     }
                   });
                 },
@@ -92,12 +91,12 @@ class _QuizQuestionDialogState extends State<QuizQuestionDialog> {
               );
               return;
             }
+            final question = Question(
+                question: questionController.text,
+                options: options,
+                answer: selectedAnswer!);
 
-            widget.onAdd({
-              'question': questionController.text,
-              'options': options,
-              'answer': selectedAnswer,
-            });
+            widget.onAdd(question);
             Navigator.pop(context);
           },
           child: const Text('Add'),
@@ -107,7 +106,6 @@ class _QuizQuestionDialogState extends State<QuizQuestionDialog> {
   }
 
   List<DropdownMenuItem<String>> _generateDropdownItems() {
-    // Generate items based on non-empty text in optionsControllers.
     return optionsControllers
         .where((controller) => controller.text.isNotEmpty)
         .map((controller) => DropdownMenuItem<String>(

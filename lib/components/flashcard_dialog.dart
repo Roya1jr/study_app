@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:study_app/models/models.dart';
 
 class FlashCardDialog extends StatelessWidget {
-  final Function(Map<String, dynamic>) onAdd;
+  final Function(FlashCard) onAdd;
 
   FlashCardDialog({super.key, required this.onAdd});
 
@@ -16,23 +17,28 @@ class FlashCardDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
-              controller: questionController,
-              decoration: const InputDecoration(labelText: 'Question')),
+            controller: questionController,
+            decoration: const InputDecoration(labelText: 'Question'),
+          ),
           TextField(
-              controller: answerController,
-              decoration: const InputDecoration(labelText: 'Answer')),
+            controller: answerController,
+            decoration: const InputDecoration(labelText: 'Answer'),
+          ),
         ],
       ),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel')),
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
         TextButton(
           onPressed: () {
-            onAdd({
-              'question': questionController.text,
-              'answer': answerController.text,
-            });
+            // Create a FlashCard instance and pass it to the onAdd callback
+            final flashCard = FlashCard(
+              question: questionController.text,
+              answer: answerController.text,
+            );
+            onAdd(flashCard); // Pass the instance directly
             Navigator.pop(context);
           },
           child: const Text('Add'),

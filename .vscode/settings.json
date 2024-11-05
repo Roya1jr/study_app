@@ -1,6 +1,4 @@
 {
-    "cmake.ignoreCMakeListsMissing": true,
-    "cSpell.words": [
-        "mycourse"
-    ]
+  "cmake.ignoreCMakeListsMissing": true,
+  "cSpell.words": ["lindex", "mycourse"]
 }

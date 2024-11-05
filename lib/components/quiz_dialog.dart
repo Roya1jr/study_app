@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:study_app/models/models.dart';
 
 class QuizDialog extends StatelessWidget {
-  final Function(Map<String, dynamic>) onAdd;
+  final Function(Quiz) onAdd;
 
   QuizDialog({super.key, required this.onAdd});
 
@@ -20,10 +21,8 @@ class QuizDialog extends StatelessWidget {
             child: const Text('Cancel')),
         TextButton(
           onPressed: () {
-            onAdd({
-              'title': titleController.text,
-              'questions': [],
-            });
+            final quiz = Quiz(title: titleController.text, questions: []);
+            onAdd(quiz);
             Navigator.pop(context);
           },
           child: const Text('Add'),

@@ -24,9 +24,9 @@ class NotesPage extends StatelessWidget {
             final isFavorite = appState.favorites.contains(course);
 
             return CourseCard(
-              imageUrl: course['image']!,
-              courseTitle: course['title']!,
-              faculty: course['faculty']!,
+              imageUrl: course.imageUrl,
+              courseTitle: course.title,
+              faculty: course.faculty,
               isFavorite: isFavorite,
               onFavoriteToggle: () {
                 appState.toggleFavorite(course);

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:study_app/components/cards.dart';
+import 'package:study_app/models/models.dart';
 
 class CourseContentPage extends StatelessWidget {
-  final Map<String, dynamic> course;
+  final Course course;
 
   const CourseContentPage({super.key, required this.course});
 
@@ -14,7 +15,7 @@ class CourseContentPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(course['title']),
+          title: Text(course.title),
           bottom: const TabBar(
             tabs: [
               Tab(
@@ -36,16 +37,16 @@ class CourseContentPage extends StatelessWidget {
                 autoPlay: false,
                 enlargeCenterPage: true,
               ),
-              items: course['flash_cards'].map<Widget>((flashCard) {
+              items: course.flashCards.map<Widget>((flashCard) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
                   child: FlipCard(
                       front: FCard(
-                          text: flashCard['question'],
+                          text: flashCard.question,
                           color: const Color.fromARGB(255, 227, 236, 242)),
                       back: FCard(
-                          text: flashCard['answer'],
+                          text: flashCard.answer,
                           color: const Color.fromARGB(255, 73, 96, 133))),
                 );
               }).toList(),
@@ -53,15 +54,13 @@ class CourseContentPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView.builder(
-                itemCount: course['quizzes'].length,
+                itemCount: course.quizzes.length,
                 itemBuilder: (context, index) {
-                  final quiz = course['quizzes'][index];
+                  final quiz = course.quizzes[index];
                   return Card(
                     child: ListTile(
-                      title: Text(quiz['title']),
-                      onTap: () {
-                        // Handle quiz tap here
-                      },
+                      title: Text(quiz.title),
+                      onTap: () {},
                     ),
                   );
                 },

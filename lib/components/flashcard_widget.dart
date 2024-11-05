@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:study_app/models/models.dart';
 
 class FlashCardWidget extends StatelessWidget {
-  final Map<String, dynamic> flashCard;
+  final FlashCard flashCard;
   final VoidCallback onDelete;
 
   const FlashCardWidget(
@@ -11,8 +12,8 @@ class FlashCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(flashCard['question']),
-        subtitle: Text(flashCard['answer']),
+        title: Text(flashCard.question),
+        subtitle: Text(flashCard.answer),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: onDelete,

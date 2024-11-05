@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:study_app/assets/quiz.dart';
 import 'package:study_app/components/navbar.dart';
+import 'package:study_app/models/models.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,16 +19,16 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final List<Map<String, dynamic>> _custom_courses = [];
-  List<Map<String, dynamic>> get custom_courses => _custom_courses;
+  final List<Course> _customCourses = [];
+  List<Course> get customCourses => _customCourses;
 
-  final List<Map<String, dynamic>> _courses = lCourses;
-  List<Map<String, dynamic>> get courses => _courses;
+  final List<Course> _courses = dbCourses;
+  List<Course> get courses => _courses;
 
-  final List<Map<String, dynamic>> _favorites = [];
-  List<Map<String, dynamic>> get favorites => _favorites;
+  final List<Course> _favorites = [];
+  List<Course> get favorites => _favorites;
 
-  void toggleFavorite(Map<String, dynamic> mycourse) {
+  void toggleFavorite(Course mycourse) {
     if (_favorites.contains(mycourse)) {
       _favorites.remove(mycourse);
     } else {
@@ -36,16 +37,16 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addCourse(Map<String, dynamic> newCourse) {
-    final existingCourseIndex = _custom_courses.indexWhere(
-      (course) => course['title'] == newCourse['title'],
+  void addCourse(Course newCourse) {
+    final existingCourseIndex = _customCourses.indexWhere(
+      (course) => course.title == newCourse.title,
     );
 
     if (existingCourseIndex != -1) {
-      _custom_courses[existingCourseIndex] = newCourse;
+      _customCourses[existingCourseIndex] = newCourse;
       print("Updating existing course");
     } else {
-      _custom_courses.add(newCourse);
+      _customCourses.add(newCourse);
       print("Adding new course");
     }
     notifyListeners();
