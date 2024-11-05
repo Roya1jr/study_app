@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class QuizDialog extends StatelessWidget {
   final Function(Map<String, dynamic>) onAdd;
 
-  QuizDialog({required this.onAdd});
+  QuizDialog({super.key, required this.onAdd});
 
   final titleController = TextEditingController();
 

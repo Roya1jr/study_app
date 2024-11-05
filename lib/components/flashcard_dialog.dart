@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class FlashCardDialog extends StatelessWidget {
   final Function(Map<String, dynamic>) onAdd;
 
-  FlashCardDialog({required this.onAdd});
+  FlashCardDialog({super.key, required this.onAdd});
 
   final questionController = TextEditingController();
   final answerController = TextEditingController();

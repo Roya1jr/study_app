@@ -39,7 +39,7 @@ class QuizWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (quiz['questions'] != null)
+          if (quiz['questions'] != null || quiz['questions'].isEmpty)
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

@@ -23,8 +23,10 @@ class MyAppState extends ChangeNotifier {
 
   final List<Map<String, dynamic>> _courses = lCourses;
   List<Map<String, dynamic>> get courses => _courses;
+
   final List<Map<String, dynamic>> _favorites = [];
   List<Map<String, dynamic>> get favorites => _favorites;
+
   void toggleFavorite(Map<String, dynamic> mycourse) {
     if (_favorites.contains(mycourse)) {
       _favorites.remove(mycourse);
@@ -34,12 +36,18 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addCourse(Map<String, dynamic> mycourse) {
-    if (_custom_courses.contains(mycourse)) {
-      _custom_courses.remove(mycourse);
-      _custom_courses.add(mycourse);
+  void addCourse(Map<String, dynamic> newCourse) {
+    final existingCourseIndex = _custom_courses.indexWhere(
+      (course) => course['title'] == newCourse['title'],
+    );
+
+    if (existingCourseIndex != -1) {
+      _custom_courses[existingCourseIndex] = newCourse;
+      print("Updating existing course");
+    } else {
+      _custom_courses.add(newCourse);
+      print("Adding new course");
     }
-    _custom_courses.add(mycourse);
     notifyListeners();
   }
 
