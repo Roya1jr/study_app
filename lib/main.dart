@@ -12,6 +12,7 @@ class MyAppState extends ChangeNotifier {
   var username = "";
   var password = "";
   var token = "";
+
   void verifyLogin(String uname, pass, tkn) {
     username = uname;
     password = pass;
@@ -52,16 +53,16 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeCourse(Course mycourse) {
+    _customCourses.remove(mycourse);
+    notifyListeners();
+  }
+
   void shareCourse(Course course) {
     if (!_courses.contains(course)) {
       _courses.add(course);
       print("Shared course: ${course.title}");
     }
-    notifyListeners();
-  }
-
-  void removeCourse(Course mycourse) {
-    _customCourses.remove(mycourse);
     notifyListeners();
   }
 

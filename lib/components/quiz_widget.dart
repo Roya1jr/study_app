@@ -5,8 +5,7 @@ import 'package:study_app/models/models.dart';
 class QuizWidget extends StatelessWidget {
   final Quiz quiz;
   final Function(Question) onAddQuestion;
-  final Function(int)
-      onDeleteQuestion; // Callback for deleting a specific question
+  final Function(int) onDeleteQuestion;
   final VoidCallback onDelete;
 
   const QuizWidget({
@@ -44,7 +43,6 @@ class QuizWidget extends StatelessWidget {
               ],
             ),
           ),
-          // Change the condition to check for non-empty questions
           if (quiz.questions.isNotEmpty)
             ListView.builder(
               shrinkWrap: true,
@@ -58,7 +56,7 @@ class QuizWidget extends StatelessWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
-                      onDeleteQuestion(qIndex); // Call the delete callback
+                      onDeleteQuestion(qIndex);
                     },
                   ),
                 );

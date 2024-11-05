@@ -73,7 +73,10 @@ class _CreatorPageState extends State<CreatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create or Edit Course')),
+      appBar: AppBar(
+        title: const Text('Editor'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: FormBuilder(

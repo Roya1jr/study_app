@@ -33,12 +33,11 @@ class FlashCardDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            // Create a FlashCard instance and pass it to the onAdd callback
             final flashCard = FlashCard(
               question: questionController.text,
               answer: answerController.text,
             );
-            onAdd(flashCard); // Pass the instance directly
+            onAdd(flashCard);
             Navigator.pop(context);
           },
           child: const Text('Add'),

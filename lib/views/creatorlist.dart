@@ -12,7 +12,8 @@ class CourseListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('My Courses')),
+        title: const Text('My Courses'),
+        centerTitle: true,
       ),
       body: courses.isEmpty
           ? const Center(child: Text('No courses created.'))

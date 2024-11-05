@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:study_app/models/models.dart';
 import 'package:study_app/views/content.dart';
 
-class FCard extends StatelessWidget {
+class FlipFlashCard extends StatelessWidget {
   final String text;
   final Color? color;
 
-  const FCard({
+  const FlipFlashCard({
     super.key,
     required this.text,
     this.color,

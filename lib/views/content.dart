@@ -16,6 +16,7 @@ class CourseContentPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(course.title),
+          centerTitle: true,
           bottom: const TabBar(
             tabs: [
               Tab(
@@ -29,7 +30,6 @@ class CourseContentPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            // Flashcards Tab with Carousel of Flip Cards
             CarouselSlider(
               options: CarouselOptions(
                 height: MediaQuery.of(context).size.height * 0.7,
@@ -42,10 +42,10 @@ class CourseContentPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
                   child: FlipCard(
-                      front: FCard(
+                      front: FlipFlashCard(
                           text: flashCard.question,
                           color: const Color.fromARGB(255, 227, 236, 242)),
-                      back: FCard(
+                      back: FlipFlashCard(
                           text: flashCard.answer,
                           color: const Color.fromARGB(255, 73, 96, 133))),
                 );
