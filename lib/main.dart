@@ -52,6 +52,19 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void shareCourse(Course course) {
+    if (!_courses.contains(course)) {
+      _courses.add(course);
+      print("Shared course: ${course.title}");
+    }
+    notifyListeners();
+  }
+
+  void removeCourse(Course mycourse) {
+    _customCourses.remove(mycourse);
+    notifyListeners();
+  }
+
   static const TextStyle appBarStyle =
       TextStyle(fontSize: 40, fontWeight: FontWeight.bold);
 }

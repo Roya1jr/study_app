@@ -33,6 +33,46 @@ class CourseListPage extends StatelessWidget {
                         ),
                       );
                     },
+                    trailing: PopupMenuButton<String>(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CreatorPage(course: course),
+                            ),
+                          );
+                        } else if (value == 'share') {
+                          context.read<MyAppState>().shareCourse(course);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${course.title} shared!')),
+                          );
+                        } else if (value == 'delete') {
+                          context.read<MyAppState>().removeCourse(course);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${course.title} deleted!')),
+                          );
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          const PopupMenuItem<String>(
+                            value: 'edit',
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'share',
+                            child: Text('Share'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Text('Delete'),
+                          ),
+                        ];
+                      },
+                    ),
                   ),
                 );
               },
