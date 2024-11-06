@@ -65,7 +65,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           _child = const NotesPage();
           break;
         case 2:
-          _child = const CourseListPage();
+          _child = const NoteListPage();
           break;
       }
     });

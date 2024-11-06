@@ -4,10 +4,10 @@ import 'package:flip_card/flip_card.dart';
 import 'package:study_app/components/cards.dart';
 import 'package:study_app/models/models.dart';
 
-class CourseContentPage extends StatelessWidget {
-  final Course course;
+class NoteContentPage extends StatelessWidget {
+  final Note note;
 
-  const CourseContentPage({super.key, required this.course});
+  const NoteContentPage({super.key, required this.note});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class CourseContentPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(course.title),
+          title: Text(note.title),
           centerTitle: true,
           bottom: const TabBar(
             tabs: [
@@ -37,7 +37,7 @@ class CourseContentPage extends StatelessWidget {
                 autoPlay: false,
                 enlargeCenterPage: true,
               ),
-              items: course.flashCards.map<Widget>((flashCard) {
+              items: note.flashCards.map<Widget>((flashCard) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
@@ -54,9 +54,9 @@ class CourseContentPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView.builder(
-                itemCount: course.quizzes.length,
+                itemCount: note.quizzes.length,
                 itemBuilder: (context, index) {
-                  final quiz = course.quizzes[index];
+                  final quiz = note.quizzes[index];
                   return Card(
                     child: ListTile(
                       title: Text(quiz.title),

@@ -31,20 +31,19 @@ class FlipFlashCard extends StatelessWidget {
   }
 }
 
-class CourseListCard extends StatelessWidget {
-  final Course course;
+class NoteListCard extends StatelessWidget {
+  final Note note;
   final Function() onRemove;
 
-  const CourseListCard(
-      {super.key, required this.course, required this.onRemove});
+  const NoteListCard({super.key, required this.note, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image.network(course.imageUrl),
-        title: Text(course.title),
-        subtitle: Text(course.faculty),
+        leading: Image.network(note.imageUrl),
+        title: Text(note.title),
+        subtitle: Text(note.faculty),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: onRemove,
@@ -53,7 +52,7 @@ class CourseListCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CourseContentPage(course: course),
+              builder: (context) => NoteContentPage(note: note),
             ),
           );
         },
@@ -62,17 +61,17 @@ class CourseListCard extends StatelessWidget {
   }
 }
 
-class CourseCard extends StatelessWidget {
+class NoteCard extends StatelessWidget {
   final String imageUrl;
-  final String courseTitle;
+  final String noteTitle;
   final String faculty;
   final bool isFavorite;
   final VoidCallback onFavoriteToggle;
 
-  const CourseCard({
+  const NoteCard({
     super.key,
     required this.imageUrl,
-    required this.courseTitle,
+    required this.noteTitle,
     required this.faculty,
     required this.isFavorite,
     required this.onFavoriteToggle,
@@ -131,7 +130,7 @@ class CourseCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      courseTitle,
+                      noteTitle,
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -151,6 +150,28 @@ class CourseCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ListFlashCard extends StatelessWidget {
+  final FlashCard flashCard;
+  final VoidCallback onDelete;
+
+  const ListFlashCard(
+      {super.key, required this.flashCard, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(flashCard.question),
+        subtitle: Text(flashCard.answer),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: onDelete,
         ),
       ),
     );

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
+import 'package:study_app/components/cards.dart';
 import 'package:study_app/main.dart';
-import 'package:study_app/components/flashcard_widget.dart';
 import 'package:study_app/components/quiz_widget.dart';
 import 'package:study_app/components/flashcard_dialog.dart';
 import 'package:study_app/components/quiz_dialog.dart';
 import 'package:study_app/models/models.dart';
 
 class CreatorPage extends StatefulWidget {
-  final Course? course;
+  final Note? note;
 
-  const CreatorPage({super.key, this.course});
+  const CreatorPage({super.key, this.note});
 
   @override
   State<CreatorPage> createState() => _CreatorPageState();
@@ -27,16 +27,16 @@ class _CreatorPageState extends State<CreatorPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.course != null) {
-      flashCards = widget.course!.flashCards;
-      quizzes = widget.course!.quizzes;
+    if (widget.note != null) {
+      flashCards = widget.note!.flashCards;
+      quizzes = widget.note!.quizzes;
     }
   }
 
   void _submitForm() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final formData = _formKey.currentState!.value;
-      final course = Course(
+      final note = Note(
           imageUrl: formData['image'],
           title: formData['title'],
           faculty: formData['faculty'],
@@ -44,7 +44,7 @@ class _CreatorPageState extends State<CreatorPage> {
           quizzes: quizzes);
 
       final appState = Provider.of<MyAppState>(context, listen: false);
-      appState.addCourse(course);
+      appState.addNote(note);
       Navigator.pop(context);
     }
   }
@@ -81,11 +81,11 @@ class _CreatorPageState extends State<CreatorPage> {
         padding: const EdgeInsets.all(16),
         child: FormBuilder(
           key: _formKey,
-          initialValue: widget.course != null ? widget.course!.toJson() : {},
+          initialValue: widget.note != null ? widget.note!.toJson() : {},
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildCourseInfo(),
+              _buildNoteInfo(),
               const SizedBox(height: 20),
               _buildFlashCardsSection(),
               const SizedBox(height: 20),
@@ -94,7 +94,7 @@ class _CreatorPageState extends State<CreatorPage> {
               Center(
                 child: ElevatedButton(
                   onPressed: _submitForm,
-                  child: const Text('Save Course'),
+                  child: const Text('Save Note'),
                 ),
               ),
             ],
@@ -104,7 +104,7 @@ class _CreatorPageState extends State<CreatorPage> {
     );
   }
 
-  Widget _buildCourseInfo() {
+  Widget _buildNoteInfo() {
     return Column(
       children: [
         FormBuilderTextField(
@@ -117,7 +117,7 @@ class _CreatorPageState extends State<CreatorPage> {
         ),
         FormBuilderTextField(
           name: 'title',
-          decoration: const InputDecoration(labelText: 'Course Title'),
+          decoration: const InputDecoration(labelText: 'Note Title'),
           validator: FormBuilderValidators.required(),
         ),
         FormBuilderTextField(
@@ -152,7 +152,7 @@ class _CreatorPageState extends State<CreatorPage> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: flashCards.length,
           itemBuilder: (context, index) {
-            return FlashCardWidget(
+            return ListFlashCard(
               flashCard: flashCards[index],
               onDelete: () => setState(() => flashCards.removeAt(index)),
             );

@@ -9,20 +9,20 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    final courses = appState.favorites;
+    final notes = appState.favorites;
 
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text("Favorites")),
       ),
       body: ListView.builder(
-        itemCount: courses.length,
+        itemCount: notes.length,
         itemBuilder: (context, index) {
-          final course = courses[index];
-          return CourseListCard(
-              course: course,
+          final note = notes[index];
+          return NoteListCard(
+              note: note,
               onRemove: () {
-                appState.toggleFavorite(course);
+                appState.toggleFavorite(note);
               });
         },
       ),

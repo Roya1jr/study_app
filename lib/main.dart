@@ -20,50 +20,63 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final List<Course> _createdCourses = [];
-  List<Course> get customCourses => _createdCourses;
+  final List<Note> _createdNotes = [];
+  List<Note> get customNotes => _createdNotes;
 
-  final List<Course> _fetchedCourses = dbCourses;
-  List<Course> get courses => _fetchedCourses;
+  final List<Note> _fetchedNotes = dbNotes;
+  List<Note> get notes => _fetchedNotes;
 
-  final List<Course> _favorites = [];
-  List<Course> get favorites => _favorites;
+  final List<Note> _favorites = [];
+  List<Note> get favorites => _favorites;
 
-  void toggleFavorite(Course mycourse) {
-    if (_favorites.contains(mycourse)) {
-      _favorites.remove(mycourse);
+  void toggleFavorite(Note mynote) {
+    if (_favorites.contains(mynote)) {
+      _favorites.remove(mynote);
     } else {
-      _favorites.add(mycourse);
+      _favorites.add(mynote);
     }
     notifyListeners();
   }
 
-  void addCourse(Course newCourse) {
-    final existingCourseIndex = _createdCourses.indexWhere(
-      (course) => course.title == newCourse.title,
+  void addNote(Note newNote) {
+    final existingNoteIndex = _createdNotes.indexWhere(
+      (note) => note.title == newNote.title,
     );
 
-    if (existingCourseIndex != -1) {
-      _createdCourses[existingCourseIndex] = newCourse;
-      print("Updating existing course");
+    if (existingNoteIndex != -1) {
+      _createdNotes[existingNoteIndex] = newNote;
+      print("Updating existing note");
     } else {
-      _createdCourses.add(newCourse);
-      print("Adding new course");
+      _createdNotes.add(newNote);
+      print("Adding new note");
     }
     notifyListeners();
   }
 
-  void removeCourse(Course mycourse) {
-    toggleFavorite(mycourse);
-    _createdCourses.remove(mycourse);
-    _fetchedCourses.remove(mycourse);
+  void removeNote(Note mynote) {
+    toggleFavorite(mynote);
+    _createdNotes.remove(mynote);
+    _fetchedNotes.remove(mynote);
     notifyListeners();
   }
 
-  void shareCourse(Course course) {
-    if (!_fetchedCourses.contains(course)) {
-      _fetchedCourses.add(course);
-      print("Shared course: ${course.title}");
+  void shareNote(Note newNote) {
+    // if (!_fetchedNotes.contains(note)) {
+    //   _fetchedNotes.add(note);
+    //   print("Shared note: ${note.title}");
+    // }
+    // notifyListeners();
+
+    final existingNoteIndex = _fetchedNotes.indexWhere(
+      (note) => note.title == newNote.title,
+    );
+
+    if (existingNoteIndex != -1) {
+      _fetchedNotes[existingNoteIndex] = newNote;
+      print("Updating existing note");
+    } else {
+      _fetchedNotes.add(newNote);
+      print("Adding new note");
     }
     notifyListeners();
   }

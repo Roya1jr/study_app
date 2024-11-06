@@ -18,18 +18,18 @@ class NotesPage extends StatelessWidget {
         autoPlay: false,
         enlargeCenterPage: true,
       ),
-      items: appState.courses.map((course) {
+      items: appState.notes.map((note) {
         return Builder(
           builder: (BuildContext context) {
-            final isFavorite = appState.favorites.contains(course);
+            final isFavorite = appState.favorites.contains(note);
 
-            return CourseCard(
-              imageUrl: course.imageUrl,
-              courseTitle: course.title,
-              faculty: course.faculty,
+            return NoteCard(
+              imageUrl: note.imageUrl,
+              noteTitle: note.title,
+              faculty: note.faculty,
               isFavorite: isFavorite,
               onFavoriteToggle: () {
-                appState.toggleFavorite(course);
+                appState.toggleFavorite(note);
               },
             );
           },

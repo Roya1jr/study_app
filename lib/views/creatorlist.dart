@@ -3,34 +3,34 @@ import 'package:provider/provider.dart';
 import 'package:study_app/main.dart';
 import 'package:study_app/views/creator.dart';
 
-class CourseListPage extends StatelessWidget {
-  const CourseListPage({super.key});
+class NoteListPage extends StatelessWidget {
+  const NoteListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final courses = context.watch<MyAppState>().customCourses;
+    final notes = context.watch<MyAppState>().customNotes;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Courses'),
+        title: const Text('My Notes'),
         centerTitle: true,
       ),
-      body: courses.isEmpty
-          ? const Center(child: Text('No courses created.'))
+      body: notes.isEmpty
+          ? const Center(child: Text('No notes created.'))
           : ListView.builder(
-              itemCount: courses.length,
+              itemCount: notes.length,
               itemBuilder: (context, index) {
-                final course = courses[index];
+                final note = notes[index];
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text(course.title),
-                    subtitle: Text(course.faculty),
+                    title: Text(note.title),
+                    subtitle: Text(note.faculty),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreatorPage(course: course),
+                          builder: (context) => CreatorPage(note: note),
                         ),
                       );
                     },
@@ -42,18 +42,18 @@ class CourseListPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CreatorPage(course: course),
+                              builder: (context) => CreatorPage(note: note),
                             ),
                           );
                         } else if (value == 'share') {
-                          context.read<MyAppState>().shareCourse(course);
+                          context.read<MyAppState>().shareNote(note);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${course.title} shared!')),
+                            SnackBar(content: Text('${note.title} shared!')),
                           );
                         } else if (value == 'delete') {
-                          context.read<MyAppState>().removeCourse(course);
+                          context.read<MyAppState>().removeNote(note);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${course.title} deleted!')),
+                            SnackBar(content: Text('${note.title} deleted!')),
                           );
                         }
                       },

@@ -1,11 +1,11 @@
-class Course {
+class Note {
   final String imageUrl;
   final String title;
   final String faculty;
   final List<FlashCard> flashCards;
   final List<Quiz> quizzes;
 
-  Course({
+  Note({
     required this.imageUrl,
     required this.title,
     required this.faculty,
@@ -13,8 +13,8 @@ class Course {
     required this.quizzes,
   });
 
-  factory Course.fromJson(Map<String, dynamic> json) {
-    return Course(
+  factory Note.fromJson(Map<String, dynamic> json) {
+    return Note(
       imageUrl: json['image'],
       title: json['title'],
       faculty: json['faculty'],
