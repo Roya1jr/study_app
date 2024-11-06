@@ -1,6 +1,6 @@
 import 'package:study_app/models/models.dart';
 
-final List<Map<String, dynamic>> _courses = [
+final List<Map<String, dynamic>> _fetchedCourses = [
   {
     'image':
         'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
@@ -727,7 +727,7 @@ final List<Map<String, dynamic>> _courses = [
   },
 ];
 
-List<Map<String, dynamic>> get lCourses => _courses;
+List<Map<String, dynamic>> get lCourses => _fetchedCourses;
 
 final List<Course> dbCourses =
-    _courses.map((json) => Course.fromJson(json)).toList();
+    _fetchedCourses.map((json) => Course.fromJson(json)).toList();

@@ -20,11 +20,11 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final List<Course> _customCourses = [];
-  List<Course> get customCourses => _customCourses;
+  final List<Course> _createdCourses = [];
+  List<Course> get customCourses => _createdCourses;
 
-  final List<Course> _courses = dbCourses;
-  List<Course> get courses => _courses;
+  final List<Course> _fetchedCourses = dbCourses;
+  List<Course> get courses => _fetchedCourses;
 
   final List<Course> _favorites = [];
   List<Course> get favorites => _favorites;
@@ -39,28 +39,30 @@ class MyAppState extends ChangeNotifier {
   }
 
   void addCourse(Course newCourse) {
-    final existingCourseIndex = _customCourses.indexWhere(
+    final existingCourseIndex = _createdCourses.indexWhere(
       (course) => course.title == newCourse.title,
     );
 
     if (existingCourseIndex != -1) {
-      _customCourses[existingCourseIndex] = newCourse;
+      _createdCourses[existingCourseIndex] = newCourse;
       print("Updating existing course");
     } else {
-      _customCourses.add(newCourse);
+      _createdCourses.add(newCourse);
       print("Adding new course");
     }
     notifyListeners();
   }
 
   void removeCourse(Course mycourse) {
-    _customCourses.remove(mycourse);
+    toggleFavorite(mycourse);
+    _createdCourses.remove(mycourse);
+    _fetchedCourses.remove(mycourse);
     notifyListeners();
   }
 
   void shareCourse(Course course) {
-    if (!_courses.contains(course)) {
-      _courses.add(course);
+    if (!_fetchedCourses.contains(course)) {
+      _fetchedCourses.add(course);
       print("Shared course: ${course.title}");
     }
     notifyListeners();
