@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:study_app/assets/quiz.dart';
 import 'package:study_app/components/navbar.dart';
+import 'package:study_app/components/notifications.dart';
 import 'package:study_app/models/models.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final notificationService = NotificationService();
+  await notificationService.initialize();
   runApp(const MyApp());
 }
 

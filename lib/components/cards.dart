@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_app/components/notifications.dart';
 import 'package:study_app/models/models.dart';
 import 'package:study_app/views/content.dart';
 
@@ -31,28 +32,76 @@ class FlipFlashCard extends StatelessWidget {
   }
 }
 
-class NoteListCard extends StatelessWidget {
+class NoteListCard extends StatefulWidget {
   final Note note;
   final Function() onRemove;
 
   const NoteListCard({super.key, required this.note, required this.onRemove});
 
   @override
+  State<NoteListCard> createState() => _NoteListCardState();
+}
+
+class _NoteListCardState extends State<NoteListCard> {
+  bool isReminderSet = false;
+  final notificationService = NotificationService();
+  void toggleReminder() async {
+    if (mounted) {
+      if (isReminderSet) {
+        await notificationService.cancelDailyNotifications(widget.note);
+        if (mounted) {
+          setState(() {
+            isReminderSet = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Study reminders turned off."),
+            ),
+          );
+        }
+      } else {
+        await notificationService.scheduleDailyNotifications(widget.note);
+        if (mounted) {
+          setState(() {
+            isReminderSet = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Study reminders scheduled!"),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image.network(note.imageUrl),
-        title: Text(note.title),
-        subtitle: Text(note.module),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: onRemove,
+        leading: Image.network(widget.note.imageUrl),
+        title: Text(widget.note.title),
+        subtitle: Text(widget.note.module),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(
+                isReminderSet ? Icons.notifications_off : Icons.notifications,
+              ),
+              onPressed: toggleReminder,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: widget.onRemove,
+            ),
+          ],
         ),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NoteContentPage(note: note),
+              builder: (context) => NoteContentPage(note: widget.note),
             ),
           );
         },

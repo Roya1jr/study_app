@@ -3,7 +3,7 @@ import 'package:study_app/models/models.dart';
 
 class QuizQuestionDialog extends StatefulWidget {
   final Function(Question) onAdd;
-  final Question? initialQuestion; // Optional parameter for editing
+  final Question? initialQuestion;
 
   const QuizQuestionDialog(
       {super.key, required this.onAdd, this.initialQuestion});
@@ -21,7 +21,6 @@ class QuizQuestionDialogState extends State<QuizQuestionDialog> {
   void initState() {
     super.initState();
     if (widget.initialQuestion != null) {
-      // If editing, populate the fields with the existing question data
       questionController.text = widget.initialQuestion!.question;
       for (int i = 0; i < widget.initialQuestion!.options.length; i++) {
         optionsControllers[i].text = widget.initialQuestion!.options[i];
@@ -109,19 +108,16 @@ class QuizQuestionDialogState extends State<QuizQuestionDialog> {
               return;
             }
 
-            // Create or update the question
             final question = Question(
               question: questionController.text,
               options: options,
               answer: selectedAnswer!,
             );
 
-            widget.onAdd(question); // Pass question back
+            widget.onAdd(question);
             Navigator.pop(context);
           },
-          child: Text(widget.initialQuestion == null
-              ? 'Add'
-              : 'Save'), // Change button text
+          child: Text(widget.initialQuestion == null ? 'Add' : 'Save'),
         ),
       ],
     );

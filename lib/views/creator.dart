@@ -250,7 +250,6 @@ class _CreatorPageState extends State<CreatorPage> {
     );
   }
 
-  // Sample list of image URLs
   final List<String> _imageOptions = [
     'https://images.pexels.com/photos/256381/pexels-photo-256381.jpeg',
     'https://images.pexels.com/photos/159862/art-school-of-athens-raphael-italian-painter-fresco-159862.jpeg',
@@ -259,6 +258,5 @@ class _CreatorPageState extends State<CreatorPage> {
     'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg',
     'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg',
     'https://images.pexels.com/photos/249798/pexels-photo-249798.png'
-    // Add more image URLs as needed
   ];
 }
