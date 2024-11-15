@@ -61,12 +61,6 @@ class MyAppState extends ChangeNotifier {
   }
 
   void shareNote(Note newNote) {
-    // if (!_fetchedNotes.contains(note)) {
-    //   _fetchedNotes.add(note);
-    //   print("Shared note: ${note.title}");
-    // }
-    // notifyListeners();
-
     final existingNoteIndex = _fetchedNotes.indexWhere(
       (note) => note.title == newNote.title,
     );

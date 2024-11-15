@@ -99,22 +99,24 @@ class NoteCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              flex: 4,
+              flex: 5,
               child: Stack(
                 children: [
                   Image.network(
                     imageUrl,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Center(child: Text('Image load error')),
                   ),
                   Positioned(
                     top: 10,
                     right: 10,
                     child: IconButton(
                       icon: Icon(
-                        size: 50,
                         isFavorite ? Icons.favorite : Icons.favorite_border,
                         color: isFavorite ? Colors.red : Colors.white,
+                        size: 50,
                       ),
                       onPressed: onFavoriteToggle,
                     ),
@@ -122,31 +124,28 @@ class NoteCard extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      noteTitle,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    noteTitle,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      overflow: TextOverflow.ellipsis,
-                      faculty,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                      ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    faculty,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

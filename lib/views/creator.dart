@@ -23,6 +23,7 @@ class _CreatorPageState extends State<CreatorPage> {
   List<FlashCard> flashCards = [];
   List<Quiz> quizzes = [];
   int currentQuizIndex = -1;
+  String? _selectedImageUrl;
 
   @override
   void initState() {
@@ -36,16 +37,22 @@ class _CreatorPageState extends State<CreatorPage> {
   void _submitForm() {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final formData = _formKey.currentState!.value;
+      final selectedImageUrl = _selectedImageUrl ??
+          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg';
+
       final note = Note(
-          imageUrl: formData['image'],
-          title: formData['title'],
-          faculty: formData['faculty'],
-          flashCards: flashCards,
-          quizzes: quizzes);
+        imageUrl: selectedImageUrl,
+        title: formData['title'],
+        faculty: formData['faculty'],
+        flashCards: flashCards,
+        quizzes: quizzes,
+      );
 
       final appState = Provider.of<MyAppState>(context, listen: false);
       appState.addNote(note);
       Navigator.pop(context);
+    } else {
+      print("Form validation failed");
     }
   }
 
@@ -106,14 +113,55 @@ class _CreatorPageState extends State<CreatorPage> {
 
   Widget _buildNoteInfo() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FormBuilderTextField(
-          name: 'image',
-          decoration: const InputDecoration(labelText: 'Image URL'),
-          validator: FormBuilderValidators.compose([
-            FormBuilderValidators.required(),
-            FormBuilderValidators.url(),
-          ]),
+        const Text('Select an Image:', style: TextStyle(fontSize: 16)),
+        SizedBox(
+          height: 100,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              ..._imageOptions.map((imageUrl) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedImageUrl = imageUrl;
+                      _formKey.currentState?.fields['image']
+                          ?.didChange(imageUrl);
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: _selectedImageUrl == imageUrl
+                            ? const Color.fromARGB(255, 129, 188, 218)
+                            : Colors.grey,
+                        width: 2.5,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: _selectedImageUrl == imageUrl
+                          ? [
+                              BoxShadow(
+                                  color: Colors.blue.withOpacity(0.5),
+                                  blurRadius: 4)
+                            ]
+                          : [],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        imageUrl,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
         ),
         FormBuilderTextField(
           name: 'title',
@@ -197,4 +245,16 @@ class _CreatorPageState extends State<CreatorPage> {
       ],
     );
   }
+
+  // Sample list of image URLs
+  final List<String> _imageOptions = [
+    'https://images.pexels.com/photos/256381/pexels-photo-256381.jpeg',
+    'https://images.pexels.com/photos/159862/art-school-of-athens-raphael-italian-painter-fresco-159862.jpeg',
+    'https://images.pexels.com/photos/8850742/pexels-photo-8850742.jpeg',
+    'https://images.pexels.com/photos/95916/pexels-photo-95916.jpeg',
+    'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg',
+    'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg',
+    'https://images.pexels.com/photos/249798/pexels-photo-249798.png'
+    // Add more image URLs as needed
+  ];
 }
