@@ -9,17 +9,6 @@ void main() {
 }
 
 class MyAppState extends ChangeNotifier {
-  var username = "";
-  var password = "";
-  var token = "";
-
-  void verifyLogin(String uname, pass, tkn) {
-    username = uname;
-    password = pass;
-    token = tkn;
-    notifyListeners();
-  }
-
   final List<Note> _createdNotes = [];
   List<Note> get customNotes => _createdNotes;
 

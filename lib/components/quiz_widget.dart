@@ -3,15 +3,19 @@ import 'package:study_app/components/quiz_question_dialog.dart';
 import 'package:study_app/models/models.dart';
 
 class QuizWidget extends StatelessWidget {
+  final int quizIndex;
   final Quiz quiz;
   final Function(Question) onAddQuestion;
+  final Function(Question, int, int) onEditQuestion;
   final Function(int) onDeleteQuestion;
   final VoidCallback onDelete;
 
   const QuizWidget({
     super.key,
+    required this.quizIndex,
     required this.quiz,
     required this.onAddQuestion,
+    required this.onEditQuestion,
     required this.onDelete,
     required this.onDeleteQuestion,
   });
@@ -49,15 +53,35 @@ class QuizWidget extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: quiz.questions.length,
               itemBuilder: (context, qIndex) {
-                final q = quiz.questions[qIndex];
+                final question = quiz.questions[qIndex];
                 return ListTile(
-                  title: Text(q.question),
-                  subtitle: Text('Answer: ${q.answer}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      onDeleteQuestion(qIndex);
-                    },
+                  title: Text(question.question),
+                  subtitle: Text('Answer: ${question.answer}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => QuizQuestionDialog(
+                              initialQuestion: question,
+                              onAdd: (editedQuestion) {
+                                onEditQuestion(
+                                    editedQuestion, quizIndex, qIndex);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          onDeleteQuestion(qIndex);
+                        },
+                      ),
+                    ],
                   ),
                 );
               },

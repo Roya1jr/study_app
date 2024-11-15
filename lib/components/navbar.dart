@@ -1,6 +1,6 @@
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:study_app/views/creatorlist.dart';
+import 'package:study_app/views/custom_notes.dart';
 import 'package:study_app/views/notes.dart';
 import 'package:study_app/views/favorites.dart';
 

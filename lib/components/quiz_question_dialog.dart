@@ -3,8 +3,10 @@ import 'package:study_app/models/models.dart';
 
 class QuizQuestionDialog extends StatefulWidget {
   final Function(Question) onAdd;
+  final Question? initialQuestion; // Optional parameter for editing
 
-  const QuizQuestionDialog({super.key, required this.onAdd});
+  const QuizQuestionDialog(
+      {super.key, required this.onAdd, this.initialQuestion});
 
   @override
   QuizQuestionDialogState createState() => QuizQuestionDialogState();
@@ -16,9 +18,24 @@ class QuizQuestionDialogState extends State<QuizQuestionDialog> {
   String? selectedAnswer;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.initialQuestion != null) {
+      // If editing, populate the fields with the existing question data
+      questionController.text = widget.initialQuestion!.question;
+      for (int i = 0; i < widget.initialQuestion!.options.length; i++) {
+        optionsControllers[i].text = widget.initialQuestion!.options[i];
+      }
+      selectedAnswer = widget.initialQuestion!.answer;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Quiz Question'),
+      title: Text(widget.initialQuestion == null
+          ? 'Add Quiz Question'
+          : 'Edit Quiz Question'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -91,15 +108,20 @@ class QuizQuestionDialogState extends State<QuizQuestionDialog> {
               );
               return;
             }
-            final question = Question(
-                question: questionController.text,
-                options: options,
-                answer: selectedAnswer!);
 
-            widget.onAdd(question);
+            // Create or update the question
+            final question = Question(
+              question: questionController.text,
+              options: options,
+              answer: selectedAnswer!,
+            );
+
+            widget.onAdd(question); // Pass question back
             Navigator.pop(context);
           },
-          child: const Text('Add'),
+          child: Text(widget.initialQuestion == null
+              ? 'Add'
+              : 'Save'), // Change button text
         ),
       ],
     );

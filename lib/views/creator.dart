@@ -68,11 +68,15 @@ class _CreatorPageState extends State<CreatorPage> {
   }
 
   void _addQuizQuestion(Question question) {
-    if (currentQuizIndex != -1) {
-      setState(() {
-        quizzes[currentQuizIndex].questions.add(question);
-      });
-    }
+    setState(() {
+      quizzes[currentQuizIndex].questions.add(question);
+    });
+  }
+
+  void _editQuizQuestion(Question question, int quizIndex, int questionIndex) {
+    setState(() {
+      quizzes[quizIndex].questions[questionIndex] = question;
+    });
   }
 
   @override
@@ -230,13 +234,15 @@ class _CreatorPageState extends State<CreatorPage> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: quizzes.length,
-          itemBuilder: (context, index) {
+          itemBuilder: (context, quizIndex) {
             return QuizWidget(
-              quiz: quizzes[index],
+              quizIndex: quizIndex, // Pass the quiz index here
+              quiz: quizzes[quizIndex],
               onAddQuestion: _addQuizQuestion,
-              onDelete: () => setState(() => quizzes.removeAt(index)),
-              onDeleteQuestion: (lindex) =>
-                  setState(() => quizzes[index].questions.removeAt(lindex)),
+              onDelete: () => setState(() => quizzes.removeAt(quizIndex)),
+              onDeleteQuestion: (qIndex) =>
+                  setState(() => quizzes[quizIndex].questions.removeAt(qIndex)),
+              onEditQuestion: _editQuizQuestion,
             );
           },
         ),
