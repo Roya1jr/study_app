@@ -1,14 +1,14 @@
 class Note {
   final String imageUrl;
   final String title;
-  final String faculty;
+  final String module;
   final List<FlashCard> flashCards;
   final List<Quiz> quizzes;
 
   Note({
     required this.imageUrl,
     required this.title,
-    required this.faculty,
+    required this.module,
     required this.flashCards,
     required this.quizzes,
   });
@@ -17,7 +17,7 @@ class Note {
     return Note(
       imageUrl: json['image'],
       title: json['title'],
-      faculty: json['faculty'],
+      module: json['module'],
       flashCards: (json['flash_cards'] as List)
           .map((card) => FlashCard.fromJson(card))
           .toList(),
@@ -30,7 +30,7 @@ class Note {
     return {
       'image': imageUrl,
       'title': title,
-      'faculty': faculty,
+      'module': module,
       'flash_cards': flashCards.map((card) => card.toJson()).toList(),
       'quizzes': quizzes.map((quiz) => quiz.toJson()).toList(),
     };

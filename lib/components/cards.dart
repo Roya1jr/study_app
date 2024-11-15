@@ -43,7 +43,7 @@ class NoteListCard extends StatelessWidget {
       child: ListTile(
         leading: Image.network(note.imageUrl),
         title: Text(note.title),
-        subtitle: Text(note.faculty),
+        subtitle: Text(note.module),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           onPressed: onRemove,
@@ -64,7 +64,7 @@ class NoteListCard extends StatelessWidget {
 class NoteCard extends StatelessWidget {
   final String imageUrl;
   final String noteTitle;
-  final String faculty;
+  final String module;
   final bool isFavorite;
   final VoidCallback onFavoriteToggle;
 
@@ -72,7 +72,7 @@ class NoteCard extends StatelessWidget {
     super.key,
     required this.imageUrl,
     required this.noteTitle,
-    required this.faculty,
+    required this.module,
     required this.isFavorite,
     required this.onFavoriteToggle,
   });
@@ -138,7 +138,7 @@ class NoteCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    faculty,
+                    module,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 16,

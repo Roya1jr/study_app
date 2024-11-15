@@ -25,7 +25,7 @@ class NoteListPage extends StatelessWidget {
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
                     title: Text(note.title),
-                    subtitle: Text(note.faculty),
+                    subtitle: Text(note.module),
                     onTap: () {
                       Navigator.push(
                         context,

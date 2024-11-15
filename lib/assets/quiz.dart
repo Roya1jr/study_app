@@ -5,7 +5,7 @@ final List<Map<String, dynamic>> _fetchedNotes = [
     'image':
         'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
     'title': 'Introduction to Computer Science',
-    'faculty': 'Faculty of Computer Science',
+    'module': 'Module of Computer Science',
     'flash_cards': [
       {
         'question': 'What is a computer?',
@@ -165,7 +165,7 @@ final List<Map<String, dynamic>> _fetchedNotes = [
     'image':
         'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
     'title': 'Data Structures & Algorithms',
-    'faculty': 'Faculty of Computer Science',
+    'module': 'Module of Computer Science',
     'flash_cards': [
       {
         'question': 'What is an array?',
@@ -341,7 +341,7 @@ final List<Map<String, dynamic>> _fetchedNotes = [
     'image':
         'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
     'title': 'Linear Algebra',
-    'faculty': 'Faculty of Mathematics',
+    'module': 'Module of Mathematics',
     'flash_cards': [
       {
         'question': 'What is a matrix?',
@@ -538,7 +538,7 @@ final List<Map<String, dynamic>> _fetchedNotes = [
     'image':
         'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg',
     'title': 'Marketing 101',
-    'faculty': 'Faculty of Business',
+    'module': 'Module of Business',
     'flash_cards': [
       {
         'question': 'What is marketing?',

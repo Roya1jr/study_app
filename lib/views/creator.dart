@@ -43,7 +43,7 @@ class _CreatorPageState extends State<CreatorPage> {
       final note = Note(
         imageUrl: selectedImageUrl,
         title: formData['title'],
-        faculty: formData['faculty'],
+        module: formData['module'],
         flashCards: flashCards,
         quizzes: quizzes,
       );
@@ -51,9 +51,7 @@ class _CreatorPageState extends State<CreatorPage> {
       final appState = Provider.of<MyAppState>(context, listen: false);
       appState.addNote(note);
       Navigator.pop(context);
-    } else {
-      print("Form validation failed");
-    }
+    } else {}
   }
 
   void _addFlashCard(FlashCard flashCard) {
@@ -169,8 +167,8 @@ class _CreatorPageState extends State<CreatorPage> {
           validator: FormBuilderValidators.required(),
         ),
         FormBuilderTextField(
-          name: 'faculty',
-          decoration: const InputDecoration(labelText: 'Faculty'),
+          name: 'module',
+          decoration: const InputDecoration(labelText: 'Module'),
           validator: FormBuilderValidators.required(),
         ),
       ],

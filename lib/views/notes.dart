@@ -26,7 +26,7 @@ class NotesPage extends StatelessWidget {
             return NoteCard(
               imageUrl: note.imageUrl,
               noteTitle: note.title,
-              faculty: note.faculty,
+              module: note.module,
               isFavorite: isFavorite,
               onFavoriteToggle: () {
                 appState.toggleFavorite(note);
