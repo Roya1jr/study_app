@@ -204,6 +204,58 @@ class NoteCard extends StatelessWidget {
   }
 }
 
+class CustomNoteCard extends StatelessWidget {
+  final Note note;
+  final VoidCallback onEdit;
+  final VoidCallback onShare;
+  final VoidCallback onDelete;
+
+  const CustomNoteCard({
+    required this.note,
+    required this.onEdit,
+    required this.onShare,
+    required this.onDelete,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      child: ListTile(
+        leading: Image.network(note.imageUrl),
+        title: Text(note.title),
+        subtitle: Text(note.module),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NoteContentPage(note: note),
+            ),
+          );
+        },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: onEdit,
+            ),
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: onShare,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: onDelete,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ListFlashCard extends StatelessWidget {
   final FlashCard flashCard;
   final VoidCallback onDelete;

@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:study_app/components/cards.dart';
 import 'package:study_app/main.dart';
-import 'package:study_app/views/content.dart';
+import 'package:study_app/models/models.dart';
 import 'package:study_app/views/creator.dart';
 
 class NoteListPage extends StatelessWidget {
   const NoteListPage({super.key});
+
+  void _editNote(BuildContext context, Note note) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreatorPage(note: note),
+      ),
+    );
+  }
+
+  void _shareNote(BuildContext context, Note note) {
+    context.read<MyAppState>().shareNote(note);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${note.title} shared!')),
+    );
+  }
+
+  void _deleteNote(BuildContext context, Note note) {
+    context.read<MyAppState>().removeNote(note);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${note.title} deleted!')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,60 +46,11 @@ class NoteListPage extends StatelessWidget {
               itemCount: notes.length,
               itemBuilder: (context, index) {
                 final note = notes[index];
-                return Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(note.title),
-                    subtitle: Text(note.module),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NoteContentPage(note: note),
-                        ),
-                      );
-                    },
-                    trailing: PopupMenuButton<String>(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      onSelected: (value) {
-                        if (value == 'edit') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CreatorPage(note: note),
-                            ),
-                          );
-                        } else if (value == 'share') {
-                          context.read<MyAppState>().shareNote(note);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${note.title} shared!')),
-                          );
-                        } else if (value == 'delete') {
-                          context.read<MyAppState>().removeNote(note);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${note.title} deleted!')),
-                          );
-                        }
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          const PopupMenuItem<String>(
-                            value: 'edit',
-                            child: Text('Edit'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'share',
-                            child: Text('Share'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Text('Delete'),
-                          ),
-                        ];
-                      },
-                    ),
-                  ),
+                return CustomNoteCard(
+                  note: note,
+                  onEdit: () => _editNote(context, note),
+                  onShare: () => _shareNote(context, note),
+                  onDelete: () => _deleteNote(context, note),
                 );
               },
             ),

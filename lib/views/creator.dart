@@ -29,6 +29,7 @@ class _CreatorPageState extends State<CreatorPage> {
   void initState() {
     super.initState();
     if (widget.note != null) {
+      _selectedImageUrl = widget.note!.imageUrl;
       flashCards = widget.note!.flashCards;
       quizzes = widget.note!.quizzes;
     }
