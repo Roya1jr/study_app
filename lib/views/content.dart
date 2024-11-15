@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:study_app/components/cards.dart';
 import 'package:study_app/models/models.dart';
+import 'package:study_app/views/quiz.dart';
 
 class NoteContentPage extends StatelessWidget {
   final Note note;
@@ -60,7 +61,14 @@ class NoteContentPage extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       title: Text(quiz.title),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuizScreen(quiz: quiz),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
