@@ -147,14 +147,17 @@ class NoteCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              flex: 5,
+            SizedBox(
+              height: 400,
+              width: double.infinity,
               child: Stack(
+                fit: StackFit.expand,
                 children: [
                   Image.network(
                     imageUrl,
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     width: double.infinity,
+                    height: double.infinity,
                     errorBuilder: (context, error, stackTrace) =>
                         const Center(child: Text('Image load error')),
                   ),
