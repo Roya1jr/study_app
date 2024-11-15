@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:study_app/main.dart';
+import 'package:study_app/views/content.dart';
 import 'package:study_app/views/creator.dart';
 
 class NoteListPage extends StatelessWidget {
@@ -30,7 +31,7 @@ class NoteListPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreatorPage(note: note),
+                          builder: (context) => NoteContentPage(note: note),
                         ),
                       );
                     },
