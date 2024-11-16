@@ -55,7 +55,7 @@ class NoteListPage extends StatelessWidget {
               },
             ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
+        padding: const EdgeInsets.only(bottom: 60.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -70,7 +70,7 @@ class NoteListPage extends StatelessWidget {
               },
               child: const Icon(Icons.add),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 20),
             FloatingActionButton(
               onPressed: () {
                 context.read<MyAppState>().toggleLoginStatus();
