@@ -11,7 +11,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  Widget _child = const FavoritesPage();
+  Widget _child = const NoteListPage();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
         bottomNavigationBar: FluidNavBar(
           icons: [
             FluidNavBarIcon(
+                icon: Icons.bookmark_add_outlined,
+                backgroundColor: const Color.fromARGB(255, 29, 58, 103),
+                extras: {"label": "create"}),
+            FluidNavBarIcon(
                 icon: Icons.favorite,
                 backgroundColor: const Color.fromARGB(255, 29, 58, 103),
                 extras: {"label": "favorites"}),
@@ -37,10 +41,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 icon: Icons.bookmarks_outlined,
                 backgroundColor: const Color.fromARGB(255, 29, 58, 103),
                 extras: {"label": "notes"}),
-            FluidNavBarIcon(
-                icon: Icons.bookmark_add_outlined,
-                backgroundColor: const Color.fromARGB(255, 29, 58, 103),
-                extras: {"label": "create"}),
           ],
           onChange: _handleNav,
           style: const FluidNavBarStyle(
@@ -59,13 +59,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
     setState(() {
       switch (index) {
         case 0:
-          _child = const FavoritesPage();
+          _child = const NoteListPage();
           break;
         case 1:
-          _child = const NotesPage();
+          _child = const FavoritesPage();
           break;
         case 2:
-          _child = const NoteListPage();
+          _child = const NotesPage();
           break;
       }
     });

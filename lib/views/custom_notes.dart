@@ -55,17 +55,36 @@ class NoteListPage extends StatelessWidget {
               },
             ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CreatorPage(),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreatorPage(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
+            const SizedBox(width: 16), // Space between the buttons
+            FloatingActionButton(
+              onPressed: () {
+                context.read<MyAppState>().toggleLoginStatus();
+                final loginStatus = context.read<MyAppState>().loginstatus
+                    ? "logged in"
+                    : "logged out";
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('You are now $loginStatus!')),
+                );
+              },
+              child: const Icon(Icons.login),
+              backgroundColor: Colors.blueAccent,
+            ),
+          ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
