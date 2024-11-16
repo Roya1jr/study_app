@@ -81,7 +81,6 @@ class NoteListPage extends StatelessWidget {
                   SnackBar(content: Text('You are now $loginStatus!')),
                 );
               },
-              backgroundColor: Colors.blueAccent,
               child: const Icon(Icons.login),
             ),
           ],
