@@ -40,53 +40,66 @@ class NoteListPage extends StatelessWidget {
         title: const Text('My Notes'),
         centerTitle: true,
       ),
-      body: notes.isEmpty
-          ? const Center(child: Text('No notes created.'))
-          : ListView.builder(
-              itemCount: notes.length,
-              itemBuilder: (context, index) {
-                final note = notes[index];
-                return CustomNoteCard(
-                  note: note,
-                  onEdit: () => _editNote(context, note),
-                  onShare: () => _shareNote(context, note),
-                  onDelete: () => _deleteNote(context, note),
-                );
-              },
-            ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreatorPage(),
+      body: Stack(
+        children: [
+          notes.isEmpty
+              ? const Center(child: Text('No notes created.'))
+              : ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 100),
+                  itemCount: notes.length,
+                  itemBuilder: (context, index) {
+                    final note = notes[index];
+                    return CustomNoteCard(
+                      note: note,
+                      onEdit: () => _editNote(context, note),
+                      onShare: () => _shareNote(context, note),
+                      onDelete: () => _deleteNote(context, note),
+                    );
+                  },
+                ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 60),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FloatingActionButton(
+                    heroTag: "create",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CreatorPage(),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.add),
                   ),
-                );
-              },
-              child: const Icon(Icons.add),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  FloatingActionButton(
+                    heroTag: "login",
+                    onPressed: () {
+                      context.read<MyAppState>().toggleLoginStatus();
+                      final loginStatus = context.read<MyAppState>().loginstatus
+                          ? "logged in"
+                          : "logged out";
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('You are now $loginStatus!')),
+                      );
+                    },
+                    backgroundColor: Colors.blueAccent,
+                    child: const Icon(Icons.login),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 20),
-            FloatingActionButton(
-              onPressed: () {
-                context.read<MyAppState>().toggleLoginStatus();
-                final loginStatus = context.read<MyAppState>().loginstatus
-                    ? "logged in"
-                    : "logged out";
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('You are now $loginStatus!')),
-                );
-              },
-              child: const Icon(Icons.login),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
