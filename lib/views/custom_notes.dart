@@ -70,7 +70,7 @@ class NoteListPage extends StatelessWidget {
               },
               child: const Icon(Icons.add),
             ),
-            const SizedBox(width: 16), // Space between the buttons
+            const SizedBox(width: 16),
             FloatingActionButton(
               onPressed: () {
                 context.read<MyAppState>().toggleLoginStatus();
@@ -81,8 +81,8 @@ class NoteListPage extends StatelessWidget {
                   SnackBar(content: Text('You are now $loginStatus!')),
                 );
               },
-              child: const Icon(Icons.login),
               backgroundColor: Colors.blueAccent,
+              child: const Icon(Icons.login),
             ),
           ],
         ),

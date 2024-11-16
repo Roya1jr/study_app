@@ -1,4 +1,8 @@
 {
   "cmake.ignoreCMakeListsMissing": true,
-  "cSpell.words": ["lindex", "mynote"]
+  "cSpell.words": [
+    "lindex",
+    "loginstatus",
+    "mynote"
+  ]
 }
