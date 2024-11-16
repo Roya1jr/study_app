@@ -4,6 +4,7 @@ import 'package:study_app/assets/quiz.dart';
 import 'package:study_app/components/navbar.dart';
 import 'package:study_app/components/notifications.dart';
 import 'package:study_app/models/models.dart';
+import 'package:study_app/views/custom_notes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,12 +23,25 @@ class MyAppState extends ChangeNotifier {
   final List<Note> _favorites = [];
   List<Note> get favorites => _favorites;
 
+  bool _loginstatus = false;
+  bool get loginstatus => _loginstatus;
+
   void toggleFavorite(Note mynote) {
     if (_favorites.contains(mynote)) {
       _favorites.remove(mynote);
     } else {
       _favorites.add(mynote);
     }
+    notifyListeners();
+  }
+
+  void toggleLoginStatus() {
+    _loginstatus = !_loginstatus;
+    notifyListeners();
+  }
+
+  void fetchNotes(Note newNote) {
+    print("fetching Notes");
     notifyListeners();
   }
 
@@ -79,13 +93,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: "Study App",
-        theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color.fromARGB(255, 14, 45, 94))),
-        home: const BottomNavBar(),
+      child: Consumer<MyAppState>(
+        builder: (context, appState, child) {
+          return MaterialApp(
+            title: "Study App",
+            theme: ThemeData(
+                useMaterial3: true,
+                colorScheme: ColorScheme.fromSeed(
+                    seedColor: const Color.fromARGB(255, 14, 45, 94))),
+            home: appState.loginstatus
+                ? const BottomNavBar()
+                : const Center(
+                    child: NoteListPage(),
+                  ),
+          );
+        },
       ),
     );
   }

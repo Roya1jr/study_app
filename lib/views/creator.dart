@@ -22,7 +22,7 @@ class _CreatorPageState extends State<CreatorPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   List<FlashCard> flashCards = [];
   List<Quiz> quizzes = [];
-  int currentQuizIndex = -1;
+  int currentQuizIndex = 0;
   String? _selectedImageUrl;
 
   @override

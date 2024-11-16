@@ -32,7 +32,7 @@ class QuizScreenState extends State<QuizScreen> {
             children: [
               Text(
                 'Q${currentQuestionIndex + 1}: ${currentQuestion.question}',
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 30),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
