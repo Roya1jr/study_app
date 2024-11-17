@@ -275,7 +275,7 @@ class CustomNoteCard extends StatefulWidget {
 
 class _CustomNoteCardState extends State<CustomNoteCard> {
   bool isReminderSet = false;
-  List<List<int>> reminderTimes = []; // Store multiple reminder times
+  List<List<int>> reminderTimes = [];
   final notificationService = NotificationService();
 
   void toggleReminder() async {
@@ -292,7 +292,6 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
         );
       } else {
         if (reminderTimes.isEmpty) {
-          // Notify user to select a time
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Please select a reminder time first."),
@@ -314,7 +313,6 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
     }
   }
 
-  // Show time picker to allow user to select the reminder time
   Future<void> selectReminderTime() async {
     final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
@@ -326,7 +324,7 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
       final int minute = selectedTime.minute;
 
       setState(() {
-        reminderTimes.add([hour, minute]); // Add selected time to the list
+        reminderTimes.add([hour, minute]);
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -382,7 +380,6 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
               ),
             ],
           ),
-          // Add a button to select reminder time
           TextButton(
             onPressed: selectReminderTime,
             child: const Text('Set Reminder Time'),

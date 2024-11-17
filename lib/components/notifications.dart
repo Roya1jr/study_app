@@ -23,7 +23,6 @@ class NotificationService {
     await _notificationsPlugin.initialize(settings);
   }
 
-  // Modify scheduleDailyNotifications to accept reminderTimes
   Future<void> scheduleDailyNotifications(
       Note note, List<List<int>> reminderTimes) async {
     const AndroidNotificationDetails androidDetails =
@@ -38,7 +37,6 @@ class NotificationService {
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidDetails);
 
-    // Loop through all selected times
     for (List<int> time in reminderTimes) {
       final int hour = time[0];
       final int minute = time[1];
@@ -46,7 +44,7 @@ class NotificationService {
           _nextInstanceOfTime(DateTime.now(), hour, minute);
 
       await _notificationsPlugin.zonedSchedule(
-        note.title.hashCode + hour + minute, // Unique ID for each reminder
+        note.title.hashCode + hour + minute,
         'Study Reminder',
         'Time to review: ${note.title}',
         scheduledTime,
@@ -88,13 +86,8 @@ class NotificationService {
 class ReminderService {
   final NotificationService notificationService = NotificationService();
 
-  // Update toggleReminder to accept a time list and the action (turn on or off)
-  Future<void> toggleReminder(
-      Note note,
-      bool isReminderSet,
-      BuildContext context,
-      List<List<int>> reminderTimes // Add reminderTimes as an argument
-      ) async {
+  Future<void> toggleReminder(Note note, bool isReminderSet,
+      BuildContext context, List<List<int>> reminderTimes) async {
     if (isReminderSet) {
       await notificationService.cancelDailyNotifications(note);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -104,14 +97,12 @@ class ReminderService {
       );
     } else {
       if (reminderTimes.isEmpty) {
-        // Notify user to select a time
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Please select a reminder time first."),
           ),
         );
       } else {
-        // Pass the reminderTimes to the NotificationService
         await notificationService.scheduleDailyNotifications(
             note, reminderTimes);
         ScaffoldMessenger.of(context).showSnackBar(
