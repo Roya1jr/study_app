@@ -46,10 +46,9 @@ class NoteListCard extends StatefulWidget {
 
 class _NoteListCardState extends State<NoteListCard> {
   bool isReminderSet = false;
-  List<List<int>> reminderTimes = []; // To store multiple reminder times
+  List<List<int>> reminderTimes = [];
   final reminderService = ReminderService();
 
-  // Toggle reminder on/off based on the selected times
   void toggleReminder() async {
     if (mounted) {
       if (isReminderSet) {
@@ -65,7 +64,6 @@ class _NoteListCardState extends State<NoteListCard> {
         );
       } else {
         if (reminderTimes.isEmpty) {
-          // Notify user to select a time
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Please select a reminder time first."),
@@ -87,7 +85,6 @@ class _NoteListCardState extends State<NoteListCard> {
     }
   }
 
-  // Show time picker to allow user to select the reminder time
   Future<void> selectReminderTime() async {
     final TimeOfDay? selectedTime = await showTimePicker(
       context: context,
@@ -99,7 +96,7 @@ class _NoteListCardState extends State<NoteListCard> {
       final int minute = selectedTime.minute;
 
       setState(() {
-        reminderTimes.add([hour, minute]); // Add selected time to the list
+        reminderTimes.add([hour, minute]);
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,19 +130,16 @@ class _NoteListCardState extends State<NoteListCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Button to set reminder time
               IconButton(
                 icon: const Icon(Icons.alarm_add),
                 onPressed: selectReminderTime,
               ),
-              // Button to toggle reminders
               IconButton(
                 icon: Icon(
                   isReminderSet ? Icons.notifications_off : Icons.notifications,
                 ),
                 onPressed: toggleReminder,
               ),
-              // Delete button
               IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: widget.onRemove,
