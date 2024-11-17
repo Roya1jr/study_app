@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:study_app/models/models.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -84,4 +85,27 @@ tz.TZDateTime _nextInstanceOfTime(DateTime now, int hour) {
   return scheduledDate.isBefore(tz.TZDateTime.now(tz.local))
       ? scheduledDate.add(const Duration(days: 1))
       : scheduledDate;
+}
+
+class ReminderService {
+  final NotificationService notificationService = NotificationService();
+
+  Future<void> toggleReminder(
+      Note note, bool isReminderSet, BuildContext context) async {
+    if (isReminderSet) {
+      await notificationService.cancelDailyNotifications(note);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Study reminders turned off."),
+        ),
+      );
+    } else {
+      await notificationService.scheduleDailyNotifications(note);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Study reminders scheduled!"),
+        ),
+      );
+    }
+  }
 }

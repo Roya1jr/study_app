@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:study_app/components/notifications.dart';
+import 'package:study_app/main.dart';
 import 'package:study_app/models/models.dart';
 import 'package:study_app/views/content.dart';
 
@@ -44,35 +46,13 @@ class NoteListCard extends StatefulWidget {
 
 class _NoteListCardState extends State<NoteListCard> {
   bool isReminderSet = false;
-  final notificationService = NotificationService();
+  final reminderService = ReminderService();
+
   void toggleReminder() async {
-    if (mounted) {
-      if (isReminderSet) {
-        await notificationService.cancelDailyNotifications(widget.note);
-        if (mounted) {
-          setState(() {
-            isReminderSet = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Study reminders turned off."),
-            ),
-          );
-        }
-      } else {
-        await notificationService.scheduleDailyNotifications(widget.note);
-        if (mounted) {
-          setState(() {
-            isReminderSet = true;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Study reminders scheduled!"),
-            ),
-          );
-        }
-      }
-    }
+    await reminderService.toggleReminder(widget.note, isReminderSet, context);
+    setState(() {
+      isReminderSet = !isReminderSet;
+    });
   }
 
   @override
@@ -207,7 +187,7 @@ class NoteCard extends StatelessWidget {
   }
 }
 
-class CustomNoteCard extends StatelessWidget {
+class CustomNoteCard extends StatefulWidget {
   final Note note;
   final VoidCallback onEdit;
   final VoidCallback onShare;
@@ -222,38 +202,84 @@ class CustomNoteCard extends StatelessWidget {
   });
 
   @override
+  State<CustomNoteCard> createState() => _CustomNoteCardState();
+}
+
+class _CustomNoteCardState extends State<CustomNoteCard> {
+  bool isReminderSet = false;
+  final notificationService = NotificationService();
+
+  void toggleReminder() async {
+    if (mounted) {
+      if (isReminderSet) {
+        await notificationService.cancelDailyNotifications(widget.note);
+        setState(() {
+          isReminderSet = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Study reminders turned off."),
+          ),
+        );
+      } else {
+        await notificationService.scheduleDailyNotifications(widget.note);
+        setState(() {
+          isReminderSet = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Study reminders scheduled!"),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final status = context.watch<MyAppState>().loginstatus;
     return Card(
       margin: const EdgeInsets.all(8.0),
-      child: ListTile(
-        leading: Image.network(note.imageUrl),
-        title: Text(note.title),
-        subtitle: Text(note.module),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NoteContentPage(note: note),
-            ),
-          );
-        },
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: onEdit,
-            ),
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: onShare,
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: onDelete,
-            ),
-          ],
-        ),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Image.network(widget.note.imageUrl),
+            title: Text(widget.note.title),
+            subtitle: Text(widget.note.module),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NoteContentPage(note: widget.note),
+                ),
+              );
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: widget.onEdit,
+              ),
+              if (status)
+                IconButton(
+                  icon: const Icon(Icons.share),
+                  onPressed: widget.onShare,
+                ),
+              IconButton(
+                icon: Icon(
+                  isReminderSet ? Icons.notifications_off : Icons.notifications,
+                ),
+                onPressed: toggleReminder,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: widget.onDelete,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
