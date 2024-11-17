@@ -270,38 +270,25 @@ class CustomNoteCard extends StatefulWidget {
 class _CustomNoteCardState extends State<CustomNoteCard> {
   bool isReminderSet = false;
   List<List<int>> reminderTimes = [];
+  final reminderService = ReminderService();
   final notificationService = NotificationService();
 
   void toggleReminder() async {
     if (mounted) {
       if (isReminderSet) {
-        await notificationService.cancelDailyNotifications(widget.note);
+        await reminderService.toggleReminder(
+            widget.note, false, context, reminderTimes);
         setState(() {
           isReminderSet = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Study reminders turned off."),
-          ),
-        );
       } else {
         if (reminderTimes.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Please select a reminder time first."),
-            ),
-          );
         } else {
-          await notificationService.scheduleDailyNotifications(
-              widget.note, reminderTimes);
+          await reminderService.toggleReminder(
+              widget.note, true, context, reminderTimes);
           setState(() {
             isReminderSet = true;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Study reminders scheduled!"),
-            ),
-          );
         }
       }
     }
@@ -327,6 +314,8 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
               "Reminder set for $hour:${minute.toString().padLeft(2, '0')}"),
         ),
       );
+      isReminderSet = true;
+      toggleReminder();
     }
   }
 
@@ -364,7 +353,9 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
                 ),
               IconButton(
                 icon: Icon(
-                  isReminderSet ? Icons.notifications_off : Icons.notifications,
+                  !isReminderSet
+                      ? Icons.notifications_off
+                      : Icons.notifications,
                 ),
                 onPressed: toggleReminder,
               ),
@@ -374,10 +365,12 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
               ),
             ],
           ),
-          TextButton(
-            onPressed: selectReminderTime,
-            child: const Text('Set Reminder Time'),
-          ),
+          isReminderSet
+              ? TextButton(
+                  onPressed: selectReminderTime,
+                  child: const Text('Set Reminder Time'),
+                )
+              : Text(""),
         ],
       ),
     );
