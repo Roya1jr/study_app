@@ -46,45 +46,113 @@ class NoteListCard extends StatefulWidget {
 
 class _NoteListCardState extends State<NoteListCard> {
   bool isReminderSet = false;
+  List<List<int>> reminderTimes = []; // To store multiple reminder times
   final reminderService = ReminderService();
 
+  // Toggle reminder on/off based on the selected times
   void toggleReminder() async {
-    await reminderService.toggleReminder(widget.note, isReminderSet, context);
-    setState(() {
-      isReminderSet = !isReminderSet;
-    });
+    if (mounted) {
+      if (isReminderSet) {
+        await reminderService.toggleReminder(
+            widget.note, false, context, reminderTimes);
+        setState(() {
+          isReminderSet = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Study reminders turned off."),
+          ),
+        );
+      } else {
+        if (reminderTimes.isEmpty) {
+          // Notify user to select a time
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Please select a reminder time first."),
+            ),
+          );
+        } else {
+          await reminderService.toggleReminder(
+              widget.note, true, context, reminderTimes);
+          setState(() {
+            isReminderSet = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Study reminders scheduled!"),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  // Show time picker to allow user to select the reminder time
+  Future<void> selectReminderTime() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      final int hour = selectedTime.hour;
+      final int minute = selectedTime.minute;
+
+      setState(() {
+        reminderTimes.add([hour, minute]); // Add selected time to the list
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Reminder set for $hour:${minute.toString().padLeft(2, '0')}"),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: Image.network(widget.note.imageUrl),
-        title: Text(widget.note.title),
-        subtitle: Text(widget.note.module),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(
-                isReminderSet ? Icons.notifications_off : Icons.notifications,
+      margin: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          ListTile(
+            leading: Image.network(widget.note.imageUrl),
+            title: Text(widget.note.title),
+            subtitle: Text(widget.note.module),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NoteContentPage(note: widget.note),
+                ),
+              );
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Button to set reminder time
+              IconButton(
+                icon: const Icon(Icons.alarm_add),
+                onPressed: selectReminderTime,
               ),
-              onPressed: toggleReminder,
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: widget.onRemove,
-            ),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NoteContentPage(note: widget.note),
-            ),
-          );
-        },
+              // Button to toggle reminders
+              IconButton(
+                icon: Icon(
+                  isReminderSet ? Icons.notifications_off : Icons.notifications,
+                ),
+                onPressed: toggleReminder,
+              ),
+              // Delete button
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: widget.onRemove,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -207,6 +275,7 @@ class CustomNoteCard extends StatefulWidget {
 
 class _CustomNoteCardState extends State<CustomNoteCard> {
   bool isReminderSet = false;
+  List<List<int>> reminderTimes = []; // Store multiple reminder times
   final notificationService = NotificationService();
 
   void toggleReminder() async {
@@ -222,16 +291,50 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
           ),
         );
       } else {
-        await notificationService.scheduleDailyNotifications(widget.note);
-        setState(() {
-          isReminderSet = true;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Study reminders scheduled!"),
-          ),
-        );
+        if (reminderTimes.isEmpty) {
+          // Notify user to select a time
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Please select a reminder time first."),
+            ),
+          );
+        } else {
+          await notificationService.scheduleDailyNotifications(
+              widget.note, reminderTimes);
+          setState(() {
+            isReminderSet = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Study reminders scheduled!"),
+            ),
+          );
+        }
       }
+    }
+  }
+
+  // Show time picker to allow user to select the reminder time
+  Future<void> selectReminderTime() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      final int hour = selectedTime.hour;
+      final int minute = selectedTime.minute;
+
+      setState(() {
+        reminderTimes.add([hour, minute]); // Add selected time to the list
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Reminder set for $hour:${minute.toString().padLeft(2, '0')}"),
+        ),
+      );
     }
   }
 
@@ -278,6 +381,11 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
                 onPressed: widget.onDelete,
               ),
             ],
+          ),
+          // Add a button to select reminder time
+          TextButton(
+            onPressed: selectReminderTime,
+            child: const Text('Set Reminder Time'),
           ),
         ],
       ),

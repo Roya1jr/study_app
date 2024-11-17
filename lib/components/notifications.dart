@@ -23,7 +23,9 @@ class NotificationService {
     await _notificationsPlugin.initialize(settings);
   }
 
-  Future<void> scheduleDailyNotifications(Note note) async {
+  // Modify scheduleDailyNotifications to accept reminderTimes
+  Future<void> scheduleDailyNotifications(
+      Note note, List<List<int>> reminderTimes) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
       'daily_study_channel',
@@ -36,14 +38,15 @@ class NotificationService {
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidDetails);
 
-    final times = [8, 14, 18];
-
-    for (int hour in times) {
+    // Loop through all selected times
+    for (List<int> time in reminderTimes) {
+      final int hour = time[0];
+      final int minute = time[1];
       final tz.TZDateTime scheduledTime =
-          _nextInstanceOfTime(DateTime.now(), hour);
+          _nextInstanceOfTime(DateTime.now(), hour, minute);
 
       await _notificationsPlugin.zonedSchedule(
-        note.title.hashCode + hour,
+        note.title.hashCode + hour + minute, // Unique ID for each reminder
         'Study Reminder',
         'Time to review: ${note.title}',
         scheduledTime,
@@ -53,45 +56,45 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.time,
         androidScheduleMode: AndroidScheduleMode.inexact,
       );
-      print("Daily notification scheduled for ${scheduledTime.hour}:00");
+      print(
+          "Reminder scheduled for ${scheduledTime.hour}:${scheduledTime.minute}");
     }
   }
 
   Future<void> cancelDailyNotifications(Note note) async {
-    final times = [8, 14, 18];
+    final times = [8, 14, 18]; // Example of predefined times
     for (int hour in times) {
       await _notificationsPlugin.cancel(note.title.hashCode + hour);
     }
     print("Daily notifications canceled for note: ${note.title}");
   }
 
-  Future<void> printPendingNotifications() async {
-    final pending = await _notificationsPlugin.pendingNotificationRequests();
-    print("Pending Notifications: $pending");
+  tz.TZDateTime _nextInstanceOfTime(DateTime now, int hour, int minute) {
+    final tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    return scheduledDate.isBefore(tz.TZDateTime.now(tz.local))
+        ? scheduledDate.add(const Duration(days: 1))
+        : scheduledDate;
   }
-}
-
-tz.TZDateTime _nextInstanceOfTime(DateTime now, int hour) {
-  final tz.TZDateTime scheduledDate = tz.TZDateTime(
-    tz.local,
-    now.year,
-    now.month,
-    now.day,
-    hour,
-    0,
-    0,
-  );
-
-  return scheduledDate.isBefore(tz.TZDateTime.now(tz.local))
-      ? scheduledDate.add(const Duration(days: 1))
-      : scheduledDate;
 }
 
 class ReminderService {
   final NotificationService notificationService = NotificationService();
 
+  // Update toggleReminder to accept a time list and the action (turn on or off)
   Future<void> toggleReminder(
-      Note note, bool isReminderSet, BuildContext context) async {
+      Note note,
+      bool isReminderSet,
+      BuildContext context,
+      List<List<int>> reminderTimes // Add reminderTimes as an argument
+      ) async {
     if (isReminderSet) {
       await notificationService.cancelDailyNotifications(note);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,12 +103,23 @@ class ReminderService {
         ),
       );
     } else {
-      await notificationService.scheduleDailyNotifications(note);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Study reminders scheduled!"),
-        ),
-      );
+      if (reminderTimes.isEmpty) {
+        // Notify user to select a time
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please select a reminder time first."),
+          ),
+        );
+      } else {
+        // Pass the reminderTimes to the NotificationService
+        await notificationService.scheduleDailyNotifications(
+            note, reminderTimes);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Study reminders scheduled!"),
+          ),
+        );
+      }
     }
   }
 }
