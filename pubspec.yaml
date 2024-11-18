@@ -45,6 +45,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   shared_preferences: ^2.3.3
   timezone: ^0.10.0
+  sqflite: ^2.4.1
 
 dev_dependencies:
   flutter_test:

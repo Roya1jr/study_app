@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:study_app/assets/quiz.dart';
 import 'package:study_app/components/navbar.dart';
-import 'package:study_app/components/notifications.dart';
+import 'package:study_app/utils/tools.dart';
 import 'package:study_app/models/models.dart';
 import 'package:study_app/views/custom_notes.dart';
 
@@ -17,7 +16,7 @@ class MyAppState extends ChangeNotifier {
   final List<Note> _createdNotes = [];
   List<Note> get customNotes => _createdNotes;
 
-  final List<Note> _fetchedNotes = dbNotes;
+  List<Note> _fetchedNotes = [];
   List<Note> get notes => _fetchedNotes;
 
   final List<Note> _favorites = [];
@@ -40,30 +39,14 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void fetchNotes(Note newNote) {
-    print("fetching Notes");
+  Future<void> fetchNotes() async {
+    _fetchedNotes = await DatabaseHelper.instance.fetchNotes();
     notifyListeners();
   }
 
-  void addNote(Note newNote) {
-    final existingNoteIndex = _createdNotes.indexWhere(
-      (note) => note.title == newNote.title,
-    );
-
-    if (existingNoteIndex != -1) {
-      _createdNotes[existingNoteIndex] = newNote;
-      print("Updating existing note");
-    } else {
-      _createdNotes.add(newNote);
-      print("Adding new note");
-    }
-    notifyListeners();
-  }
-
-  void removeNote(Note mynote) {
-    toggleFavorite(mynote);
-    _createdNotes.remove(mynote);
-    _fetchedNotes.remove(mynote);
+  void addNote(Note newNote) async {
+    await DatabaseHelper.instance.insertNote(newNote);
+    _fetchedNotes = await DatabaseHelper.instance.fetchNotes();
     notifyListeners();
   }
 
@@ -79,6 +62,23 @@ class MyAppState extends ChangeNotifier {
       _fetchedNotes.add(newNote);
       print("Adding new note");
     }
+    notifyListeners();
+  }
+
+  void removeNote(Note mynote) async {
+    await DatabaseHelper.instance.removeNote(mynote.id);
+    _fetchedNotes = await DatabaseHelper.instance.fetchNotes();
+    toggleFavorite(mynote);
+    notifyListeners();
+  }
+
+  void login() {
+    _loginstatus = true;
+    notifyListeners();
+  }
+
+  void logout() {
+    _loginstatus = false;
     notifyListeners();
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:study_app/components/notifications.dart';
+import 'package:study_app/utils/tools.dart';
 import 'package:study_app/main.dart';
 import 'package:study_app/models/models.dart';
 import 'package:study_app/views/content.dart';

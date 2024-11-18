@@ -1,4 +1,5 @@
 class Note {
+  final int id;
   final String imageUrl;
   final String title;
   final String module;
@@ -6,6 +7,7 @@ class Note {
   final List<Quiz> quizzes;
 
   Note({
+    this.id = 0,
     required this.imageUrl,
     required this.title,
     required this.module,
@@ -15,6 +17,7 @@ class Note {
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
+      id: json['id'],
       imageUrl: json['image'],
       title: json['title'],
       module: json['module'],
@@ -28,12 +31,31 @@ class Note {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'image': imageUrl,
       'title': title,
       'module': module,
       'flash_cards': flashCards.map((card) => card.toJson()).toList(),
       'quizzes': quizzes.map((quiz) => quiz.toJson()).toList(),
     };
+  }
+
+  Note copyWith({
+    int? id,
+    String? imageUrl,
+    String? title,
+    String? module,
+    List<FlashCard>? flashCards,
+    List<Quiz>? quizzes,
+  }) {
+    return Note(
+      id: id ?? this.id,
+      imageUrl: imageUrl ?? this.imageUrl,
+      title: title ?? this.title,
+      module: module ?? this.module,
+      flashCards: flashCards ?? this.flashCards,
+      quizzes: quizzes ?? this.quizzes,
+    );
   }
 }
 
@@ -62,16 +84,19 @@ class FlashCard {
 }
 
 class Quiz {
+  final int id;
   final String title;
   final List<Question> questions;
 
   Quiz({
+    this.id = 0,
     required this.title,
     required this.questions,
   });
 
   factory Quiz.fromJson(Map<String, dynamic> json) {
     return Quiz(
+      id: json['id'],
       title: json['title'],
       questions:
           (json['questions'] as List).map((q) => Question.fromJson(q)).toList(),
@@ -80,9 +105,22 @@ class Quiz {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'questions': questions.map((q) => q.toJson()).toList(),
     };
+  }
+
+  Quiz copyWith({
+    int? id,
+    String? title,
+    List<Question>? questions,
+  }) {
+    return Quiz(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      questions: questions ?? this.questions,
+    );
   }
 }
 

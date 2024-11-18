@@ -237,7 +237,7 @@ class _CreatorPageState extends State<CreatorPage> {
           itemCount: quizzes.length,
           itemBuilder: (context, quizIndex) {
             return QuizWidget(
-              quizIndex: quizIndex, // Pass the quiz index here
+              quizIndex: quizIndex,
               quiz: quizzes[quizIndex],
               onAddQuestion: _addQuizQuestion,
               onDelete: () => setState(() => quizzes.removeAt(quizIndex)),
