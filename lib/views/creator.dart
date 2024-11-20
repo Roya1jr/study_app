@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
+import 'package:square_progress_indicator/square_progress_indicator.dart';
 import 'package:study_app/components/cards.dart';
 import 'package:study_app/main.dart';
 import 'package:study_app/components/quiz_widget.dart';
@@ -82,6 +84,7 @@ class _CreatorPageState extends State<CreatorPage> {
 
   @override
   Widget build(BuildContext context) {
+    var images = context.watch<MyAppState>().imageOptions;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editor'),
@@ -95,7 +98,7 @@ class _CreatorPageState extends State<CreatorPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildNoteInfo(),
+              _buildNoteInfo(images),
               const SizedBox(height: 20),
               _buildFlashCardsSection(),
               const SizedBox(height: 20),
@@ -114,7 +117,7 @@ class _CreatorPageState extends State<CreatorPage> {
     );
   }
 
-  Widget _buildNoteInfo() {
+  Widget _buildNoteInfo(List<String> imageOptions) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -124,7 +127,7 @@ class _CreatorPageState extends State<CreatorPage> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              ..._imageOptions.map((imageUrl) {
+              ...imageOptions.map((imageUrl) {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
@@ -142,7 +145,7 @@ class _CreatorPageState extends State<CreatorPage> {
                             : Colors.grey,
                         width: 2.5,
                       ),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: _selectedImageUrl == imageUrl
                           ? [
                               BoxShadow(
@@ -153,11 +156,19 @@ class _CreatorPageState extends State<CreatorPage> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                SquareProgressIndicator(
+                          value: downloadProgress.progress,
+                          startPosition: StartPosition.topLeft,
+                        ),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.signal_wifi_connected_no_internet_4),
                       ),
                     ),
                   ),
@@ -250,14 +261,4 @@ class _CreatorPageState extends State<CreatorPage> {
       ],
     );
   }
-
-  final List<String> _imageOptions = [
-    'https://images.pexels.com/photos/256381/pexels-photo-256381.jpeg',
-    'https://images.pexels.com/photos/159862/art-school-of-athens-raphael-italian-painter-fresco-159862.jpeg',
-    'https://images.pexels.com/photos/8850742/pexels-photo-8850742.jpeg',
-    'https://images.pexels.com/photos/95916/pexels-photo-95916.jpeg',
-    'https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg',
-    'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg',
-    'https://images.pexels.com/photos/249798/pexels-photo-249798.png'
-  ];
 }

@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:square_progress_indicator/square_progress_indicator.dart';
 import 'package:study_app/utils/tools.dart';
 import 'package:study_app/main.dart';
 import 'package:study_app/models/models.dart';
@@ -114,7 +116,20 @@ class _NoteListCardState extends State<NoteListCard> {
       child: Column(
         children: [
           ListTile(
-            leading: Image.network(widget.note.imageUrl),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: CachedNetworkImage(
+                imageUrl: widget.note.imageUrl,
+                fit: BoxFit.cover,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    SquareProgressIndicator(
+                  value: downloadProgress.progress,
+                  startPosition: StartPosition.topLeft,
+                ),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.signal_wifi_connected_no_internet_4),
+              ),
+            ),
             title: Text(widget.note.title),
             subtitle: Text(widget.note.module),
             onTap: () {
@@ -196,13 +211,22 @@ class NoteCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Center(child: Text('Image load error')),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              SquareProgressIndicator(
+                        value: downloadProgress.progress,
+                        startPosition: StartPosition.topLeft,
+                      ),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.signal_wifi_connected_no_internet_4),
+                    ),
                   ),
                   Positioned(
                     top: 10,

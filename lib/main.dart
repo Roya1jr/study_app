@@ -39,6 +39,9 @@ class MyAppState extends ChangeNotifier {
   List<Note> _fetchedNotes = [];
   List<Note> get notes => _fetchedNotes;
 
+  List<String> _imageOptions = [];
+  List<String> get imageOptions => _imageOptions;
+
   final List<Note> _favorites = [];
   List<Note> get favorites => _favorites;
 
@@ -55,6 +58,7 @@ class MyAppState extends ChangeNotifier {
 
       await fetchCustomNotes();
       await fetchNotes();
+      await fetchImages();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -66,9 +70,9 @@ class MyAppState extends ChangeNotifier {
 
   Future<void> fetchNotes() async {
     try {
-      final records = await pb.collection('notes').getFullList(
-            sort: '-created',
-          );
+      final records = await pb
+          .collection('notes')
+          .getFullList(sort: '-created', filter: 'isShared = True');
 
       _fetchedNotes = records.map((record) {
         return Note.fromJson(record.data["content"], record.id);
@@ -76,6 +80,31 @@ class MyAppState extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  Future<void> fetchImages() async {
+    try {
+      final records = await pb.collection('images').getFullList(
+            sort: '-created',
+          );
+
+      _imageOptions = records.map((e) {
+        debugPrint(e.data.toString());
+        return e.data["imageURL"] as String;
+      }).toList();
+      notifyListeners();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> fetchCustomNotes() async {
+    try {
+      _createdNotes = await DatabaseHelper.instance.fetchNotes();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching notes: $e');
     }
   }
 
@@ -114,15 +143,6 @@ class MyAppState extends ChangeNotifier {
       return loginstatus;
     }
     return loginstatus;
-  }
-
-  Future<void> fetchCustomNotes() async {
-    try {
-      _createdNotes = await DatabaseHelper.instance.fetchNotes();
-      notifyListeners();
-    } catch (e) {
-      debugPrint('Error fetching notes: $e');
-    }
   }
 
   Future<void> addNote(Note newNote) async {
