@@ -1,47 +1,47 @@
 class Note {
-  final int id;
-  final String imageUrl;
+  final String? id;
   final String title;
+  final String imageUrl;
   final String module;
   final List<FlashCard> flashCards;
   final List<Quiz> quizzes;
 
   Note({
-    this.id = 0,
-    required this.imageUrl,
+    this.id,
     required this.title,
+    required this.imageUrl,
     required this.module,
-    required this.flashCards,
-    required this.quizzes,
+    this.flashCards = const [],
+    this.quizzes = const [],
   });
 
-  factory Note.fromJson(Map<String, dynamic> json) {
+  factory Note.fromJson(Map<String, dynamic> json, String id) {
     return Note(
-      id: json['id'],
-      imageUrl: json['image'],
-      title: json['title'],
-      module: json['module'],
-      flashCards: (json['flash_cards'] as List)
-          .map((card) => FlashCard.fromJson(card))
-          .toList(),
-      quizzes:
-          (json['quizzes'] as List).map((quiz) => Quiz.fromJson(quiz)).toList(),
+      id: id,
+      imageUrl: json['image'] ?? '',
+      title: json['title'] ?? '',
+      module: json['module'] ?? '',
+      flashCards: (json['flash_cards'] as List<dynamic>?)
+              ?.map((card) => FlashCard.fromJson(card))
+              .toList() ??
+          [],
+      quizzes: (json['quizzes'] as List<dynamic>?)
+              ?.map((quiz) => Quiz.fromJson(quiz))
+              .toList() ??
+          [],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'image': imageUrl,
+      'image_url': imageUrl,
       'title': title,
       'module': module,
-      'flash_cards': flashCards.map((card) => card.toJson()).toList(),
-      'quizzes': quizzes.map((quiz) => quiz.toJson()).toList(),
     };
   }
 
   Note copyWith({
-    int? id,
+    String? id,
     String? imageUrl,
     String? title,
     String? module,
@@ -84,7 +84,7 @@ class FlashCard {
 }
 
 class Quiz {
-  final int id;
+  final int? id;
   final String title;
   final List<Question> questions;
 

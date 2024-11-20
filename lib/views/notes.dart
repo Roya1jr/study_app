@@ -10,7 +10,7 @@ class NotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
+    appState.fetchNotes();
     return CarouselSlider(
       options: CarouselOptions(
         height: MediaQuery.of(context).size.height,

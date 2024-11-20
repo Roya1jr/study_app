@@ -35,14 +35,14 @@ class NoteListPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+        final GlobalKey<FormState> formKey = GlobalKey<FormState>();
         String? email;
         String? password;
 
         return AlertDialog(
           title: const Text("Login or Register"),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -87,8 +87,8 @@ class NoteListPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Registered successfully!')),
@@ -98,14 +98,23 @@ class NoteListPage extends StatelessWidget {
               child: const Text("Register"),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  context.read<MyAppState>().toggleLoginStatus();
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Logged in successfully!')),
-                  );
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
+                  var islogged = await context
+                      .read<MyAppState>()
+                      .userLogin(email!, password);
+                  if (islogged) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Logged in successfully!')),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Incorrect Username or passowrd')),
+                    );
+                  }
                 }
               },
               child: const Text("Login"),
@@ -165,12 +174,14 @@ class NoteListPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  FloatingActionButton(
-                    heroTag: "login",
-                    onPressed: () => _showLoginDialog(context),
-                    backgroundColor: Colors.blueAccent,
-                    child: const Icon(Icons.login),
-                  ),
+                  context.watch<MyAppState>().loginstatus
+                      ? Text("")
+                      : FloatingActionButton(
+                          heroTag: "login",
+                          onPressed: () => _showLoginDialog(context),
+                          backgroundColor: Colors.blueAccent,
+                          child: const Icon(Icons.login),
+                        ),
                 ],
               ),
             ),
