@@ -210,7 +210,7 @@ class NoteCard extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.white,
+                        color: isFavorite ? Colors.red : Colors.red[100],
                         size: 50,
                       ),
                       onPressed: onFavoriteToggle,
