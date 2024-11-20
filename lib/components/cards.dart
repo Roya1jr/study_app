@@ -135,7 +135,9 @@ class _NoteListCardState extends State<NoteListCard> {
               ),
               IconButton(
                 icon: Icon(
-                  isReminderSet ? Icons.notifications_off : Icons.notifications,
+                  !isReminderSet
+                      ? Icons.notifications_off
+                      : Icons.notifications,
                 ),
                 onPressed: toggleReminder,
               ),

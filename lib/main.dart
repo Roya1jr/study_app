@@ -54,7 +54,7 @@ class MyAppState extends ChangeNotifier {
       notifyListeners();
 
       await fetchCustomNotes();
-
+      await fetchNotes();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -73,7 +73,6 @@ class MyAppState extends ChangeNotifier {
       _fetchedNotes = records.map((record) {
         return Note.fromJson(record.data["content"], record.id);
       }).toList();
-
       notifyListeners();
     } catch (e) {
       debugPrint(e.toString());
@@ -81,6 +80,8 @@ class MyAppState extends ChangeNotifier {
   }
 
   void toggleFavorite(Note mynote) {
+    debugPrint(mynote.toString());
+    debugPrint(favorites.toString());
     if (_favorites.contains(mynote)) {
       _favorites.remove(mynote);
     } else {

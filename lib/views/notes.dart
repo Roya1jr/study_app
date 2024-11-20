@@ -10,7 +10,6 @@ class NotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    appState.fetchNotes();
     return CarouselSlider(
       options: CarouselOptions(
         height: MediaQuery.of(context).size.height,
@@ -22,13 +21,13 @@ class NotesPage extends StatelessWidget {
         return Builder(
           builder: (BuildContext context) {
             final isFavorite = appState.favorites.contains(note);
-
             return NoteCard(
               imageUrl: note.imageUrl,
               noteTitle: note.title,
               module: note.module,
               isFavorite: isFavorite,
               onFavoriteToggle: () {
+                debugPrint(isFavorite.toString());
                 appState.toggleFavorite(note);
               },
             );
