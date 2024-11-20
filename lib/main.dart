@@ -89,9 +89,9 @@ class MyAppState extends ChangeNotifier {
             sort: '-created',
           );
 
-      _imageOptions = records.map((e) {
-        debugPrint(e.data.toString());
-        return e.data["imageURL"] as String;
+      _imageOptions = records.map((i) {
+        debugPrint(i.data.toString());
+        return i.data["imageURL"] as String;
       }).toList();
       notifyListeners();
     } catch (e) {
