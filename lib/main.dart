@@ -6,6 +6,7 @@ import 'package:study_app/utils/tools.dart';
 import 'package:study_app/models/models.dart';
 import 'package:study_app/views/custom_notes.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:uuid/uuid.dart';
 
 final pb = PocketBase('http://10.0.2.2:8090');
 
@@ -125,6 +126,37 @@ class MyAppState extends ChangeNotifier {
 
   Future<bool> userLogin(String email, password) async {
     try {
+      final authData = await pb.collection('users').authWithPassword(
+            email,
+            password,
+          );
+      debugPrint(pb.authStore.isValid.toString());
+      debugPrint(pb.authStore.token);
+      debugPrint(pb.authStore.model.id);
+      if (pb.authStore.isValid) {
+        _loginstatus = pb.authStore.isValid;
+        loginToken = authData.token;
+        notifyListeners();
+        return loginstatus;
+      }
+    } catch (e) {
+      return loginstatus;
+    }
+    return loginstatus;
+  }
+
+  Future<bool> userRegister(String email, password) async {
+    try {
+      final body = <String, dynamic>{
+        "username": ("user${Uuid().v4()}"),
+        "email": email,
+        "emailVisibility": true,
+        "password": password,
+        "passwordConfirm": password,
+        "name": email.split("@").first
+      };
+      final record = await pb.collection('users').create(body: body);
+      debugPrint(record.toString());
       final authData = await pb.collection('users').authWithPassword(
             email,
             password,

@@ -86,13 +86,22 @@ class NoteListPage extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   formKey.currentState!.save();
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Registered successfully!')),
-                  );
+                  var isReg = await context
+                      .read<MyAppState>()
+                      .userRegister(email!, password);
+                  if (isReg) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Registered successfully!')),
+                    );
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to register')),
+                    );
+                  }
                 }
               },
               child: const Text("Register"),
