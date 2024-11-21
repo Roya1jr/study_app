@@ -101,7 +101,8 @@ class MyAppState extends ChangeNotifier {
 
   Future<void> fetchCustomNotes() async {
     try {
-      _createdNotes = await DatabaseHelper.instance.fetchNotes();
+      final records = await DatabaseHelper.instance.fetchCustomNotes();
+      _createdNotes = records;
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching notes: $e');
@@ -109,8 +110,6 @@ class MyAppState extends ChangeNotifier {
   }
 
   void toggleFavorite(Note mynote) {
-    debugPrint(mynote.toString());
-    debugPrint(favorites.toString());
     if (_favorites.contains(mynote)) {
       _favorites.remove(mynote);
     } else {
@@ -145,31 +144,34 @@ class MyAppState extends ChangeNotifier {
     return loginstatus;
   }
 
-  Future<void> addNote(Note newNote) async {
+  Future<bool> addNote(Note newNote) async {
     try {
-      await DatabaseHelper.instance.insertNote(newNote);
-      await fetchCustomNotes();
+      final creatorId = _loginstatus ? pb.authStore.model.id : "";
+      await DatabaseHelper.instance
+          .insertCustomNote(note: newNote, isShared: 0, creator: creatorId);
       notifyListeners();
+      return true;
     } catch (e) {
-      debugPrint('Error adding note: $e');
+      print('Error adding note: $e');
+      return false;
     }
   }
 
   void shareNote(Note newNote) async {
     try {
-      final existingNoteIndex = _fetchedNotes.indexWhere(
-        (note) => note.title == newNote.title,
-      );
+      await DatabaseHelper.instance.updateCustomNote(
+          note: newNote, isShared: 1, creator: pb.authStore.model.id);
+      final body = <String, dynamic>{
+        "isShared": true,
+        "creator": pb.authStore.model.id,
+        "content": newNote.toApiFormat()
+      };
 
-      if (existingNoteIndex != -1) {
-        _fetchedNotes[existingNoteIndex] = newNote;
-        debugPrint("Updating existing note");
-      } else {
-        await DatabaseHelper.instance.insertNote(newNote);
-        await fetchCustomNotes();
-        debugPrint("Adding new note");
-      }
-
+      final record = await pb.collection('notes').create(body: body);
+      debugPrint(record.toString());
+      await fetchCustomNotes();
+      await fetchNotes();
+      debugPrint("Adding new note");
       notifyListeners();
     } catch (e) {
       debugPrint('Error sharing note: $e');
@@ -178,7 +180,7 @@ class MyAppState extends ChangeNotifier {
 
   Future<void> removeNote(Note mynote) async {
     try {
-      await DatabaseHelper.instance.removeNote(mynote.id!);
+      await DatabaseHelper.instance.deleteCustomNote(mynote.id);
       await fetchCustomNotes();
 
       if (_favorites.contains(mynote)) {

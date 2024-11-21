@@ -351,7 +351,17 @@ class _CustomNoteCardState extends State<CustomNoteCard> {
       child: Column(
         children: [
           ListTile(
-            leading: Image.network(widget.note.imageUrl),
+            leading: CachedNetworkImage(
+              imageUrl: widget.note.imageUrl,
+              fit: BoxFit.cover,
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  SquareProgressIndicator(
+                value: downloadProgress.progress,
+                startPosition: StartPosition.topLeft,
+              ),
+              errorWidget: (context, url, error) =>
+                  Icon(Icons.signal_wifi_connected_no_internet_4),
+            ),
             title: Text(widget.note.title),
             subtitle: Text(widget.note.module),
             onTap: () {

@@ -1,5 +1,7 @@
+import 'package:uuid/uuid.dart';
+
 class Note {
-  final String? id;
+  final String id;
   final String title;
   final String imageUrl;
   final String module;
@@ -7,25 +9,25 @@ class Note {
   final List<Quiz> quizzes;
 
   Note({
-    this.id,
+    String? id,
     required this.title,
     required this.imageUrl,
     required this.module,
     this.flashCards = const [],
     this.quizzes = const [],
-  });
+  }) : id = id ?? const Uuid().v4();
 
-  factory Note.fromJson(Map<String, dynamic> json, String id) {
+  factory Note.fromJson(Map json, String? id) {
     return Note(
-      id: id,
+      id: id ?? const Uuid().v4(),
       imageUrl: json['image'] ?? '',
       title: json['title'] ?? '',
       module: json['module'] ?? '',
-      flashCards: (json['flash_cards'] as List<dynamic>?)
+      flashCards: (json['flash_cards'] as List?)
               ?.map((card) => FlashCard.fromJson(card))
               .toList() ??
           [],
-      quizzes: (json['quizzes'] as List<dynamic>?)
+      quizzes: (json['quizzes'] as List?)
               ?.map((quiz) => Quiz.fromJson(quiz))
               .toList() ??
           [],
@@ -34,10 +36,72 @@ class Note {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'image_url': imageUrl,
       'title': title,
       'module': module,
+      'flash_cards': flashCards.map((card) => card.toJson()).toList(),
+      'quizzes': quizzes.map((quiz) => quiz.toJson()).toList(),
     };
+  }
+
+  // New method for API format
+  Map<String, dynamic> toApiFormat() {
+    return {
+      'flash_cards': flashCards
+          .map((card) => {
+                'question': card.question,
+                'answer': card.answer,
+              })
+          .toList(),
+      'image': imageUrl,
+      'module': module,
+      'quizzes': quizzes
+          .map((quiz) => {
+                'title': quiz.title,
+                'questions': quiz.questions
+                    .map((question) => {
+                          'question': question.question,
+                          'options': question.options,
+                          'answer': question.answer,
+                        })
+                    .toList(),
+              })
+          .toList(),
+      'title': title,
+    };
+  }
+
+  // New factory constructor for API format
+  factory Note.fromApiFormat(Map<String, dynamic> json, {String? id}) {
+    return Note(
+      id: id,
+      imageUrl: json['image'] ?? '',
+      title: json['title'] ?? '',
+      module: json['module'] ?? '',
+      flashCards: (json['flash_cards'] as List?)
+              ?.map((card) => FlashCard(
+                    question: card['question'] ?? '',
+                    answer: card['answer'] ?? '',
+                  ))
+              .toList() ??
+          [],
+      quizzes: (json['quizzes'] as List?)
+              ?.map((quiz) => Quiz(
+                    title: quiz['title'] ?? '',
+                    questions: (quiz['questions'] as List?)
+                            ?.map((q) => Question(
+                                  question: q['question'] ?? '',
+                                  options:
+                                      List<String>.from(q['options'] ?? []),
+                                  answer: q['answer'] ?? '',
+                                ))
+                            .toList() ??
+                        [],
+                  ))
+              .toList() ??
+          [],
+    );
   }
 
   Note copyWith({
@@ -70,8 +134,8 @@ class FlashCard {
 
   factory FlashCard.fromJson(Map<String, dynamic> json) {
     return FlashCard(
-      question: json['question'],
-      answer: json['answer'],
+      question: json['question'] ?? '',
+      answer: json['answer'] ?? '',
     );
   }
 
@@ -97,9 +161,11 @@ class Quiz {
   factory Quiz.fromJson(Map<String, dynamic> json) {
     return Quiz(
       id: json['id'],
-      title: json['title'],
-      questions:
-          (json['questions'] as List).map((q) => Question.fromJson(q)).toList(),
+      title: json['title'] ?? '',
+      questions: (json['questions'] as List?)
+              ?.map((q) => Question.fromJson(q))
+              .toList() ??
+          [],
     );
   }
 
@@ -137,9 +203,9 @@ class Question {
 
   factory Question.fromJson(Map<String, dynamic> json) {
     return Question(
-      question: json['question'],
-      options: List<String>.from(json['options']),
-      answer: json['answer'],
+      question: json['question'] ?? '',
+      options: List<String>.from(json['options'] ?? []),
+      answer: json['answer'] ?? '',
     );
   }
 

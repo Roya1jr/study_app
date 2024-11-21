@@ -26,7 +26,7 @@ class _CreatorPageState extends State<CreatorPage> {
   List<Quiz> quizzes = [];
   int currentQuizIndex = 0;
   String? _selectedImageUrl;
-
+  String? _id;
   @override
   void initState() {
     super.initState();
@@ -34,16 +34,19 @@ class _CreatorPageState extends State<CreatorPage> {
       _selectedImageUrl = widget.note!.imageUrl;
       flashCards = widget.note!.flashCards;
       quizzes = widget.note!.quizzes;
+      _id = widget.note!.id;
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
+      debugPrint(_selectedImageUrl);
       final formData = _formKey.currentState!.value;
       final selectedImageUrl = _selectedImageUrl ??
           'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg';
 
       final note = Note(
+        id: _id,
         imageUrl: selectedImageUrl,
         title: formData['title'],
         module: formData['module'],
@@ -52,7 +55,9 @@ class _CreatorPageState extends State<CreatorPage> {
       );
 
       final appState = Provider.of<MyAppState>(context, listen: false);
-      appState.addNote(note);
+      final tf = await appState.addNote(note);
+      appState.fetchCustomNotes();
+      debugPrint(tf.toString());
       Navigator.pop(context);
     } else {}
   }

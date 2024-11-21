@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sqflite/sqflite.dart';
@@ -191,69 +192,217 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    try {
-      final dbPath = await getDatabasesPath();
-      final path = join(dbPath, 'study_materials.db');
-      return openDatabase(
-        path,
-        version: 1,
-        onCreate: _onCreate,
-        onConfigure: (db) async {
-          await db.execute('PRAGMA foreign_keys = ON');
-        },
-      );
-    } catch (e) {
-      throw DatabaseException('Failed to initialize database: $e');
-    }
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'study_notes.db');
+    return openDatabase(
+      path,
+      version: 1,
+      onCreate: _onCreate,
+    );
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    await db.transaction((txn) async {
-      await txn.execute('''
-       CREATE TABLE notes(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          image_url TEXT,
-          title TEXT NOT NULL,
-          module TEXT NOT NULL,
-          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )
-      ''');
+    await db.execute('''
+      CREATE TABLE custom_notes (
+        id TEXT PRIMARY KEY,
+        isShared INTEGER NOT NULL,
+        creator TEXT NOT NULL,
+        content TEXT NOT NULL
+      )
+    ''');
 
-      await txn.execute('''
-        CREATE UNIQUE INDEX idx_notes_id ON notes(id)
-      ''');
+    await db.execute('''
+      CREATE TABLE fetched_notes (
+        id TEXT PRIMARY KEY,
+        isShared INTEGER NOT NULL,
+        creator TEXT NOT NULL,
+        content TEXT NOT NULL,
+        isFavourite INTEGER NOT NULL
+      )
+    ''');
+  }
 
-      await txn.execute('''
-        CREATE TABLE flashcards(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          noteId INTEGER NOT NULL,
-          question TEXT NOT NULL,
-          answer TEXT NOT NULL,
-          FOREIGN KEY(noteId) REFERENCES notes(id) ON DELETE CASCADE
-        )
-      ''');
+  Future<String> insertCustomNote(
+      {required Note note,
+      required int isShared,
+      required String creator}) async {
+    final db = await database;
+    final id = note.id;
+    debugPrint(note.imageUrl);
 
-      await txn.execute('''
-        CREATE TABLE quizzes(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          noteId INTEGER NOT NULL,
-          title TEXT NOT NULL,
-          FOREIGN KEY(noteId) REFERENCES notes(id) ON DELETE CASCADE
-        )
-      ''');
+    // Check if note already exists
+    final existingNote =
+        await db.query('custom_notes', where: 'id = ?', whereArgs: [id]);
 
-      await txn.execute('''
-        CREATE TABLE questions(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          quizId INTEGER NOT NULL,
-          question TEXT NOT NULL,
-          options TEXT NOT NULL,
-          answer TEXT NOT NULL,
-          FOREIGN KEY(quizId) REFERENCES quizzes(id) ON DELETE CASCADE
-        )
-      ''');
-    });
+    final noteContent = {
+      'image': note.imageUrl,
+      'title': note.title,
+      'module': note.module,
+      'flash_cards': note.flashCards.map((fc) => fc.toJson()).toList(),
+      'quizzes': note.quizzes.map((quiz) => quiz.toJson()).toList(),
+    };
+
+    if (existingNote.isNotEmpty) {
+      // Note exists, update it
+      await db.update(
+          'custom_notes',
+          {
+            'isShared': isShared,
+            'creator': creator,
+            'content': json.encode(noteContent)
+          },
+          where: 'id = ?',
+          whereArgs: [id]);
+    } else {
+      // Note doesn't exist, insert it
+      await db.insert('custom_notes', {
+        'id': id,
+        'isShared': isShared,
+        'creator': creator,
+        'content': json.encode(noteContent)
+      });
+    }
+
+    return id;
+  }
+
+  Future<String> insertFetchedNote(
+      {required Note note,
+      required bool isShared,
+      required String creator,
+      int isFavourite = 0}) async {
+    final db = await database;
+    final id = note.id;
+
+    // Check if note already exists
+    final existingNote =
+        await db.query('fetched_notes', where: 'id = ?', whereArgs: [id]);
+
+    final noteContent = {
+      'image_url': note.imageUrl,
+      'title': note.title,
+      'module': note.module,
+      'flash_cards': note.flashCards.map((fc) => fc.toJson()).toList(),
+      'quizzes': note.quizzes.map((quiz) => quiz.toJson()).toList(),
+    };
+
+    if (existingNote.isNotEmpty) {
+      // Note exists, update it
+      await db.update(
+          'fetched_notes',
+          {
+            'isShared': isShared,
+            'creator': creator,
+            'content': json.encode(noteContent),
+            'isFavourite': isFavourite
+          },
+          where: 'id = ?',
+          whereArgs: [id]);
+    } else {
+      // Note doesn't exist, insert it
+      await db.insert('fetched_notes', {
+        'id': id,
+        'isShared': isShared,
+        'creator': creator,
+        'content': json.encode(noteContent),
+        'isFavourite': isFavourite
+      });
+    }
+
+    return id;
+  }
+
+  Future<List<Note>> fetchCustomNotes() async {
+    final db = await database;
+    final notes = await db.query('custom_notes');
+
+    return notes.map((noteMap) {
+      final content = json.decode(noteMap['content'] as String);
+      return Note.fromJson(content, noteMap['id'] as String);
+    }).toList();
+  }
+
+  Future<List<Note>> getSharedCustomNotes() async {
+    final db = await database;
+    final notes = await db.query(
+      'custom_notes',
+      where: 'isShared = ?',
+      whereArgs: [1],
+    );
+
+    return notes.map((noteMap) {
+      final content = json.decode(noteMap['content'] as String);
+      return Note.fromJson(content, noteMap['id'] as String);
+    }).toList();
+  }
+
+  Future<void> updateCustomNote(
+      {required Note note, int? isShared, String? creator}) async {
+    final db = await database;
+    debugPrint(note.imageUrl);
+    final updateData = <String, dynamic>{
+      'content': json.encode({
+        'image_url': note.imageUrl,
+        'title': note.title,
+        'module': note.module,
+        'flash_cards': note.flashCards.map((fc) => fc.toJson()).toList(),
+        'quizzes': note.quizzes.map((quiz) => quiz.toJson()).toList(),
+      })
+    };
+
+    if (isShared != null) updateData['isShared'] = isShared;
+    if (creator != null) updateData['creator'] = creator;
+
+    await db.update('custom_notes', updateData,
+        where: 'id = ?', whereArgs: [note.id]);
+  }
+
+  Future<void> deleteCustomNote(String id) async {
+    final db = await database;
+    await db.delete('custom_notes', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<Note>> fetchFetchedNotes() async {
+    final db = await database;
+    final notes = await db.query('fetched_notes');
+
+    return notes.map((noteMap) {
+      final content = json.decode(noteMap['content'] as String);
+      final note = Note.fromJson(content, noteMap['id'] as String);
+      return note.copyWith(
+        id: noteMap['id'] as String,
+      );
+    }).toList();
+  }
+
+  Future<void> updateFetchedNote(
+      {required Note note,
+      bool? isShared,
+      String? creator,
+      bool? isFavourite}) async {
+    final db = await database;
+
+    final updateData = <String, dynamic>{
+      'content': json.encode({
+        'image_url': note.imageUrl,
+        'title': note.title,
+        'module': note.module,
+        'flash_cards': note.flashCards.map((fc) => fc.toJson()).toList(),
+        'quizzes': note.quizzes.map((quiz) => quiz.toJson()).toList(),
+      })
+    };
+
+    if (isShared != null) updateData['isShared'] = isShared;
+    if (creator != null) updateData['creator'] = creator;
+    if (isFavourite != null) updateData['isFavourite'] = isFavourite;
+
+    await db.update('fetched_notes', updateData,
+        where: 'id = ?', whereArgs: [note.id]);
+  }
+
+  Future<void> deleteFetchedNote(String id) async {
+    final db = await database;
+    await db.delete('fetched_notes', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> close() async {
@@ -261,238 +410,6 @@ class DatabaseHelper {
     if (db != null) {
       await db.close();
       _database = null;
-    }
-  }
-
-  Future<bool> isIdUnique(String id) async {
-    try {
-      final db = await database;
-      final result = await db.query(
-        'notes',
-        where: 'id = ?',
-        whereArgs: [id],
-        limit: 1,
-      );
-      return result.isEmpty;
-    } catch (e) {
-      throw DatabaseException('Failed to check id uniqueness: $e');
-    }
-  }
-
-  Future<int> insertNote(Note note) async {
-    try {
-      final db = await database;
-      int noteId = 0;
-
-      if (!await isIdUnique(note.id!)) {
-        throw DatabaseException('Note with ID ${note.id} already exists');
-      }
-
-      await db.transaction((txn) async {
-        if (note.title.isEmpty || note.module.isEmpty) {
-          throw DatabaseException('Note title and module cannot be empty');
-        }
-
-        noteId = await txn.insert(
-          'notes',
-          {
-            ...note.toJson(),
-            'created_at': DateTime.now().toIso8601String(),
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-          conflictAlgorithm: ConflictAlgorithm.abort,
-        );
-
-        for (var flashCard in note.flashCards) {
-          await txn.insert('flashcards', {
-            'noteId': noteId,
-            'question': flashCard.question,
-            'answer': flashCard.answer,
-          });
-        }
-
-        for (var quiz in note.quizzes) {
-          final quizId = await txn.insert('quizzes', {
-            'noteId': noteId,
-            'title': quiz.title,
-          });
-
-          for (var question in quiz.questions) {
-            await txn.insert('questions', {
-              'quizId': quizId,
-              'question': question.question,
-              'options': question.options.join(','),
-              'answer': question.answer,
-            });
-          }
-        }
-      });
-
-      return noteId;
-    } catch (e) {
-      throw DatabaseException('Failed to insert note: $e');
-    }
-  }
-
-  Future<void> updateNote(Note note) async {
-    try {
-      final db = await database;
-
-      await db.transaction((txn) async {
-        if (note.title.isEmpty || note.module.isEmpty) {
-          throw DatabaseException('Note title and module cannot be empty');
-        }
-
-        await txn.update(
-          'notes',
-          {
-            ...note.toJson(),
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-          where: 'id = ?',
-          whereArgs: [note.id],
-          conflictAlgorithm: ConflictAlgorithm.abort,
-        );
-
-        // Delete existing related records
-        await txn
-            .delete('flashcards', where: 'noteId = ?', whereArgs: [note.id]);
-        await txn.delete('quizzes', where: 'noteId = ?', whereArgs: [note.id]);
-
-        // Reinsert flashcards
-        for (var flashCard in note.flashCards) {
-          await txn.insert('flashcards', {
-            'noteId': note.id,
-            'question': flashCard.question,
-            'answer': flashCard.answer,
-          });
-        }
-
-        // Reinsert quizzes and their questions
-        for (var quiz in note.quizzes) {
-          final quizId = await txn.insert('quizzes', {
-            'noteId': note.id,
-            'title': quiz.title,
-          });
-
-          for (var question in quiz.questions) {
-            await txn.insert('questions', {
-              'quizId': quizId,
-              'question': question.question,
-              'options': question.options.join(','),
-              'answer': question.answer,
-            });
-          }
-        }
-      });
-    } catch (e) {
-      throw DatabaseException('Failed to update note: $e');
-    }
-  }
-
-  Future<List<Note>> fetchNotes() async {
-    try {
-      final db = await database;
-
-      // Fetch all data in a single query using JOINs
-      final results = await db.rawQuery('''
-        SELECT 
-          n.id as note_id, 
-          n.image_url, 
-          n.title as note_title, 
-          n.module,
-          f.id as flashcard_id, 
-          f.question as flashcard_question, 
-          f.answer as flashcard_answer,
-          q.id as quiz_id, 
-          q.title as quiz_title,
-          qs.id as question_id,
-          qs.question as quiz_question,
-          qs.options as quiz_options,
-          qs.answer as quiz_answer
-        FROM notes n
-        LEFT JOIN flashcards f ON f.noteId = n.id
-        LEFT JOIN quizzes q ON q.noteId = n.id
-        LEFT JOIN questions qs ON qs.quizId = q.id
-        ORDER BY n.id
-      ''');
-
-      // Process results into Note objects
-      final Map<String, Note> notesMap = {};
-      final Map<int, Quiz> quizzesMap = {};
-
-      for (final row in results) {
-        final noteId = row['note_id'] as String;
-
-        final note = notesMap.putIfAbsent(
-          noteId,
-          () => Note(
-            id: noteId,
-            imageUrl: row['image_url'] as String,
-            title: row['note_title'] as String,
-            module: row['module'] as String,
-            flashCards: [],
-            quizzes: [],
-          ),
-        );
-
-        if (row['flashcard_id'] != null) {
-          final flashcard = FlashCard(
-            question: row['flashcard_question'] as String,
-            answer: row['flashcard_answer'] as String,
-          );
-          if (!note.flashCards.contains(flashcard)) {
-            note.flashCards.add(flashcard);
-          }
-        }
-
-        if (row['quiz_id'] != null) {
-          final quizId = row['quiz_id'] as int;
-          final quiz = quizzesMap.putIfAbsent(
-            quizId,
-            () {
-              final newQuiz = Quiz(
-                title: row['quiz_title'] as String,
-                questions: [],
-              );
-              note.quizzes.add(newQuiz);
-              return newQuiz;
-            },
-          );
-
-          if (row['question_id'] != null) {
-            final question = Question(
-              question: row['quiz_question'] as String,
-              options: (row['quiz_options'] as String).split(','),
-              answer: row['quiz_answer'] as String,
-            );
-            if (!quiz.questions.contains(question)) {
-              quiz.questions.add(question);
-            }
-          }
-        }
-      }
-
-      return notesMap.values.toList();
-    } catch (e) {
-      throw DatabaseException('Failed to fetch notes: $e');
-    }
-  }
-
-  Future<void> removeNote(String id) async {
-    try {
-      final db = await database;
-      final result = await db.delete(
-        'notes',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-
-      if (result == 0) {
-        throw DatabaseException('Note not found with id: $id');
-      }
-    } catch (e) {
-      throw DatabaseException('Failed to remove note: $e');
     }
   }
 }
